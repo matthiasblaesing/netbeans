@@ -67,3 +67,9 @@ enterprise/javaee7.api/external/jsr181-api-1.0-MR1.jar java/websvc.jaxws21api/ex
 
 # the jcodings is used internally in two unrelated modules:
 ide/libs.bytelist/external/jcodings-1.0.18.jar ide/textmate.lexer/external/jcodings-1.0.18.jar
+
+# Only used as testdata (not redistributed) and modules should be testable independed of each other
+webcommon/javascript2.doc/external/testfiles-jsdoc-1.zip webcommon/javascript2.editor/external/testfiles-jsdoc-1.zip are identical
+webcommon/javascript2.editor/external/testfiles-jsdoc-1.zip webcommon/javascript2.extdoc/external/testfiles-jsdoc-1.zip are identical
+webcommon/javascript2.extdoc/external/testfiles-jsdoc-1.zip webcommon/javascript2.jsdoc/external/testfiles-jsdoc-1.zip are identical
+webcommon/javascript2.jsdoc/external/testfiles-jsdoc-1.zip webcommon/javascript2.sdoc/external/testfiles-jsdoc-1.zip are identical</failure>
