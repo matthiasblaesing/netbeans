@@ -21,8 +21,18 @@ package org.netbeans.modules.web.clientproject;
 import java.awt.Component;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import jdk.jshell.spi.ExecutionControl;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.api.project.FileOwnerQuery;
@@ -41,6 +51,7 @@ import org.netbeans.spi.project.ui.ProjectProblemsProvider;
 import org.openide.awt.HtmlBrowser;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.test.MockLookup;
@@ -59,6 +70,25 @@ public class ClientSideProjectTest extends NbTestCase {
         super.setUp();
         clearWorkDir();
         MockLookup.setLayersAndInstances("smth");
+        // Prepare template file for testProjectCreationFromZipTemplate
+        File zipFile = new File(getDataDir(), "TestTemplate.zip");
+        if (!zipFile.exists()) {
+            try (FileOutputStream fos = new FileOutputStream(zipFile);
+                ZipOutputStream zipOutputStream = new ZipOutputStream(fos)) {
+                Path basePath = new File(getDataDir(), "sample-project").toPath();
+                Files.walk(basePath).forEachOrdered(p -> {
+                    try {
+                        if (Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS)) {
+                            ZipEntry ze = new ZipEntry(basePath.relativize(p).toString());
+                            zipOutputStream.putNextEntry(ze);
+                            Files.copy(p, zipOutputStream);
+                        }
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+            }
+        }
     }
 
     public void testProjectWithSiteRootCreation() throws Exception {
