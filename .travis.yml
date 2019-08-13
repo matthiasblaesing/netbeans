@@ -179,3 +179,50 @@ matrix:
              ide/xml.xdm
              ide/xsl"
           jdk: openjdk8
+
+        # Test webcommon cluster, not included are all module without unittests
+        # and cordova, lib.v8debug, javascript2.requirejs, javascript2.nodejs
+        # which all have known problems
+        - env: >
+            SIGTEST=false
+            COMPILETEST=false
+            RAT=false
+            EOL=false
+            LICENSE=false
+            CV=false
+            RUN_TESTS_JDK9PLUS=false
+            RUN_TESTS_JDK8=true
+            OPTS="-Dcluster.config=minimal -quiet build -Djavac.compilerargs=-nowarn -Dbuild.compiler.deprecation=false -Dtest-unit-sys-prop.ignore.random.failures=true"
+            TEST_MODULES="webcommon/html.angular
+             webcommon/languages.apacheconf
+             webcommon/languages.ini
+             webcommon/javascript.bower
+             webcommon/javascript.cdnjs
+             webcommon/libs.graaljs
+             webcommon/libs.truffleapi
+             webcommon/javascript.grunt
+             webcommon/web.clientproject
+             webcommon/web.clientproject.api
+             webcommon/javascript2.doc
+             webcommon/javascript2.editor
+             webcommon/javascript2.extdoc
+             webcommon/javascript2.extjs
+             webcommon/javascript2.jquery
+             webcommon/javascript2.jsdoc
+             webcommon/javascript2.json
+             webcommon/javascript2.knockout
+             webcommon/javascript2.lexer
+             webcommon/javascript2.model
+             webcommon/javascript2.prototypejs
+             webcommon/javascript2.sdoc
+             webcommon/javascript2.jade
+             webcommon/javascript.v8debug
+             webcommon/javascript.karma
+             webcommon/html.knockout
+             webcommon/api.knockout
+             webcommon/libs.nashorn
+             webcommon/javascript.nodejs
+             webcommon/javascript.htmlojet
+             webcommon/selenium2.webclient
+             webcommon/web.inspect"
+          jdk: openjdk8
