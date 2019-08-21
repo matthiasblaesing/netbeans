@@ -192,7 +192,7 @@ matrix:
             CV=false
             RUN_TESTS_JDK9PLUS=false
             RUN_TESTS_JDK8=true
-            OPTS="-Dcluster.config=minimal -quiet build -Djavac.compilerargs=-nowarn -Dbuild.compiler.deprecation=false -Dtest-unit-sys-prop.ignore.random.failures=true"
+            OPTS="-Dcluster.config=php -quiet build -Djavac.compilerargs=-nowarn -Dbuild.compiler.deprecation=false -Dtest-unit-sys-prop.ignore.random.failures=true"
             TEST_MODULES="webcommon/html.angular
              webcommon/languages.apacheconf
              webcommon/languages.ini
