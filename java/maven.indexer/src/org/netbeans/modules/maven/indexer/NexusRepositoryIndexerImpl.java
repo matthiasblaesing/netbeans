@@ -128,13 +128,6 @@ public class NexusRepositoryIndexerImpl implements RepositoryIndexerImplementati
         BaseQueries, ChecksumQueries, ArchetypeQueries, DependencyInfoQueries,
         ClassesQuery, ClassUsageQuery, GenericFindQuery, ContextLoadedQuery {
 
-    static {
-        // XXX patch for LUCENE-10431
-        // should be removed as soon migration from EOL lucene 8 to lucene 9+ is possible
-        // currently blocked by JDK 8 language level requirement of NB
-        MultiTermQuery.secretInit(); // <- remove source file from repo too
-    }
-
     private static final Logger LOGGER = Logger.getLogger(NexusRepositoryIndexerImpl.class.getName());
 
     private static final String GROUP_CACHE_ALL_PREFIX = "nb-groupcache-all-v1"; // NOI18N
