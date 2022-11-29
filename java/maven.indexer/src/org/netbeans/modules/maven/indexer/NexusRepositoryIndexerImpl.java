@@ -429,29 +429,27 @@ public class NexusRepositoryIndexerImpl implements RepositoryIndexerImplementati
             }
         }
 
-        int oldMax = BooleanQuery.getMaxClauseCount();
+        int oldMax = IndexSearcher.getMaxClauseCount();
         try {
             int max = oldMax;
             while (true) {
                 IteratorSearchResponse response;
                 try {
-                    BooleanQuery.setMaxClauseCount(max);
+                    IndexSearcher.setMaxClauseCount(max);
                     response = searcher.searchIteratorPaged(isr, contexts);
                     LOGGER.log(Level.FINE, "passed on {0} clauses processing {1} with {2} hits", new Object[] {max, q, response.getTotalHitsCount()});
                     return response;
-                } catch (BooleanQuery.TooManyClauses exc) {
+                } catch (IndexSearcher.TooManyClauses exc) {
                     LOGGER.log(Level.FINE, "TooManyClauses on {0} clauses processing {1}", new Object[] {max, q});
                     max *= 2;
                     if (max > MAX_MAX_CLAUSE) {
                         LOGGER.log(Level.WARNING, "Encountered more than {0} clauses processing {1}", new Object[] {MAX_MAX_CLAUSE, q});
                         return null;
-                    } else {
-                        continue;
                     }
                 }
             }
         } finally {
-            BooleanQuery.setMaxClauseCount(oldMax);
+            IndexSearcher.setMaxClauseCount(oldMax);
         }
     }
 

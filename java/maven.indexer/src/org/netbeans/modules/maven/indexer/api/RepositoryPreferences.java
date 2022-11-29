@@ -227,9 +227,9 @@ public final class RepositoryPreferences {
         final Settings settings = embedder2.getSettings();
         for (Mirror mirror : settings.getMirrors()) {
             String mirrorOf = mirror.getMirrorOf();
-            selectorWithGroups.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, mirrorOf, mirror.getMirrorOfLayouts());
+            selectorWithGroups.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, false, mirrorOf, mirror.getMirrorOfLayouts());
             if (!mirrorOf.contains("*")) {
-                selectorWithoutGroups.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, mirrorOf, mirror.getMirrorOfLayouts());
+                selectorWithoutGroups.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, false, mirrorOf, mirror.getMirrorOfLayouts());
             }
         }
 
