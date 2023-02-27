@@ -15,8 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 9E98B3B9FD533669536BA2395FCFC4C6FA65B720 org.apache.maven.indexer:indexer-core:7.0.1
-E9E7FE827E814839D8826D83CFFDBD9D255150C4 org.apache.lucene:lucene-core:9.4.2
-76EB0793F495045EF18B4324A47B94F50A1A163F org.apache.lucene:lucene-highlighter:9.4.2
-322AA2CA41F66C002B5D0AB1D21264D65FF5B9C5 org.apache.lucene:lucene-queryparser:9.4.2
-FC0C95D5BDD0F604FFE165F6EB4DB82621455EBE org.apache.lucene:lucene-analysis-common:9.4.2
+BBA4BA5D30E71A5F0017E45E8469DB8CFF8AD102 org.apache.lucene:lucene-core:9.5.0
+8B5E3CEA3370838BDA1D730CF55176C24A763D2E org.apache.lucene:lucene-highlighter:9.5.0
+B3E3D9434BCFCE242E242364C64EAB0888D285E2 org.apache.lucene:lucene-queryparser:9.5.0
+F68660102455A466F98CAC0501723BED7E7C6407 org.apache.lucene:lucene-analysis-common:9.5.0
 479C1E06DB31C432330183F5CAE684163F186146 javax.annotation:javax.annotation-api:1.2
