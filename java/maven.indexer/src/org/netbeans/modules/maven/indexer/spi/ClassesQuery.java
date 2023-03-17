@@ -23,7 +23,6 @@
 package org.netbeans.modules.maven.indexer.spi;
 
 import java.util.List;
-import org.apache.lucene.search.BooleanQuery;
 import org.netbeans.modules.maven.indexer.api.NBVersionInfo;
 import org.netbeans.modules.maven.indexer.api.RepositoryInfo;
 

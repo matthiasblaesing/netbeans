@@ -742,6 +742,9 @@ jobs:
       - name: java/maven.indexer
         run: ant $OPTS -f java/maven.indexer test
 
+      - name: java/maven.indexer.impl
+        run: ant $OPTS -f java/maven.indexer.impl test
+
       - name: java/maven.junit
         run: ant $OPTS -f java/maven.junit test
 

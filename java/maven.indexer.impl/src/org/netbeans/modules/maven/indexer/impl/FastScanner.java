@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.impl;
 
 import com.google.inject.Inject;
 import java.io.File;

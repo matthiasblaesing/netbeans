@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.impl;
 
 import java.util.Set;
 import org.openide.util.Cancellable;

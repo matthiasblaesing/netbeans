@@ -18,8 +18,6 @@
  */
 package org.netbeans.modules.maven.indexer.spi.impl;
 
-import org.netbeans.modules.maven.indexer.ResultImpl;
-
 /**
  * used internally by the repository indexing/searching engine(s)
  * @author mkleint

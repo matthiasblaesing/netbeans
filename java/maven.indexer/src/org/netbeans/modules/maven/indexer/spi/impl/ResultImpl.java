@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.spi.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import org.netbeans.modules.maven.indexer.api.RepositoryInfo;
 import org.netbeans.modules.maven.indexer.spi.ResultImplementation;
-import org.netbeans.modules.maven.indexer.spi.impl.Redo;
 import org.netbeans.modules.project.spi.intern.ProjectIDEServices;
 
 /**
@@ -58,7 +57,7 @@ public class ResultImpl<T> implements ResultImplementation<T> {
     /**
      * used internally by the repository indexing/searching engine(s) to mark the result as partially skipped
      */
-    synchronized void addSkipped(RepositoryInfo info) {
+    public synchronized void addSkipped(RepositoryInfo info) {
         skipped.add(info);
     }
 
@@ -74,7 +73,7 @@ public class ResultImpl<T> implements ResultImplementation<T> {
         }
     }
 
-    synchronized void setResults(Collection<T> newResults) {
+    public synchronized void setResults(Collection<T> newResults) {
         results.clear();
         results.addAll(newResults);
     }
@@ -88,14 +87,14 @@ public class ResultImpl<T> implements ResultImplementation<T> {
     /**
      * used internally by the repository indexing/searching engine(s) to mark the result as partially skipped
      */
-    synchronized void addSkipped(Collection<RepositoryInfo> infos) {
+    public synchronized void addSkipped(Collection<RepositoryInfo> infos) {
         skipped.addAll(infos);
     }
 
     /**
      * used internally by the repository indexing/searching engine(s) to mark the result as partially skipped
      */
-    synchronized List<RepositoryInfo> getSkipped() {
+    public synchronized List<RepositoryInfo> getSkipped() {
         return Collections.unmodifiableList(skipped);
     }
     
@@ -109,7 +108,7 @@ public class ResultImpl<T> implements ResultImplementation<T> {
         return totalResults;
     }
 
-    void addTotalResultCount(int moreTotalResults) {
+    public void addTotalResultCount(int moreTotalResults) {
         totalResults += moreTotalResults;
     }
     /**
@@ -122,7 +121,7 @@ public class ResultImpl<T> implements ResultImplementation<T> {
         return returnedResults;
     }
 
-    void addReturnedResultCount(int moreReturnedResults) {
+    public void addReturnedResultCount(int moreReturnedResults) {
         returnedResults = moreReturnedResults + returnedResults;
     }
     

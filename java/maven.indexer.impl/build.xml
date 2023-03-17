@@ -20,7 +20,7 @@
 
 -->
 
-<project basedir="." default="build" name="java/maven.indexer">
-    <description>Builds, tests, and runs the project org.netbeans.modules.maven.indexer</description>
+<project basedir="." default="build" name="java/maven.indexer.impl">
+    <description>Builds, tests, and runs the project org.netbeans.modules.maven.indexer.impl</description>
     <import file="../../nbbuild/templates/projectized.xml"/>
 </project>

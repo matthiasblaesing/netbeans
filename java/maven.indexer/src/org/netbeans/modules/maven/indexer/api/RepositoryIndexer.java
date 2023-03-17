@@ -23,10 +23,8 @@ package org.netbeans.modules.maven.indexer.api;
 
 import java.util.Collection;
 import org.apache.maven.artifact.Artifact;
-import org.netbeans.modules.maven.indexer.NexusRepositoryIndexerImpl;
 import org.netbeans.modules.maven.indexer.spi.impl.RepositoryIndexerImplementation;
 import org.openide.util.Lookup;
-import org.netbeans.modules.maven.indexer.spi.RepositoryIndexQueryProvider;
 
 /**
  *
@@ -68,15 +66,7 @@ public final class RepositoryIndexer {
     }
     
     static RepositoryIndexerImplementation findImplementation(RepositoryInfo repo) {
-        Lookup l = Lookup.getDefault();
-        Collection<? extends RepositoryIndexQueryProvider> queryProviders = l.lookupAll(RepositoryIndexQueryProvider.class);
-        for (RepositoryIndexQueryProvider queryProvider : queryProviders) {
-            if(!(queryProvider instanceof NexusRepositoryIndexerImpl) && queryProvider.handlesRepository(repo)) {
-                // skip if 
-                return null;
-            }
-        }
-        return l.lookup(RepositoryIndexerImplementation.class);
+        return Lookup.getDefault().lookup(RepositoryIndexerImplementation.class);
     }
     
 }

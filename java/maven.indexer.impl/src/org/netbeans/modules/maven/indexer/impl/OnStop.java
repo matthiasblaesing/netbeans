@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.impl;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +28,7 @@ import org.openide.util.Lookup;
 public class OnStop implements Runnable {
     @Override
     public void run() {
-        Logger LOG = Logger.getLogger(org.netbeans.modules.maven.indexer.OnStop.class.getName());
+        Logger LOG = Logger.getLogger(org.netbeans.modules.maven.indexer.impl.OnStop.class.getName());
         if (!Cancellation.cancelAll()) {
             // Cf. #188883. Hard to kill HTTP connections.
             for (Thread t : RemoteIndexTransferListener.getActiveTransfersOrScans()) {

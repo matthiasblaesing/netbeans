@@ -24,7 +24,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.repository.RepositorySystem;
 import org.netbeans.api.annotations.common.CheckForNull;
 import org.netbeans.api.annotations.common.NullAllowed;
@@ -261,7 +259,7 @@ public class PluginIndexManager {
         Set<String> result = new TreeSet<>();
         // Note that this will not work reliably for remote indices created prior to a fix for MINDEXER-34:
         QueryField qf = new QueryField();
-        qf.setField(ArtifactInfo.PLUGIN_PREFIX);
+        qf.setField("px");
         qf.setValue(prefix);
         qf.setOccur(QueryField.OCCUR_MUST);
         qf.setMatch(QueryField.MATCH_EXACT);

@@ -20,7 +20,7 @@
  * Contributor(s): theanuradha@netbeans.org
  */
 
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.impl;
 
 import java.io.IOException;
 import java.util.HashMap;

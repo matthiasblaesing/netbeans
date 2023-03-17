@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

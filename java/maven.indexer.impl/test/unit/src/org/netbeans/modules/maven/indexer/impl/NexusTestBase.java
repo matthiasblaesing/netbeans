@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.impl;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -29,6 +29,7 @@ import org.netbeans.modules.maven.embedder.EmbedderFactory;
 import org.netbeans.modules.maven.embedder.MavenEmbedder;
 import org.netbeans.modules.maven.indexer.api.RepositoryInfo;
 import org.netbeans.modules.maven.indexer.api.RepositoryPreferences;
+import org.netbeans.modules.maven.indexer.impl.NexusRepositoryIndexerImpl;
 import org.openide.modules.api.PlacesTestUtils;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;

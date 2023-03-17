@@ -20,7 +20,7 @@
  * Contributor(s): theanuradha@netbeans.org
  */
 
-package org.netbeans.modules.maven.indexer;
+package org.netbeans.modules.maven.indexer.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -111,6 +111,7 @@ import org.netbeans.modules.maven.indexer.spi.GenericFindQuery;
 import org.netbeans.modules.maven.indexer.spi.impl.RepositoryIndexerImplementation;
 import org.netbeans.modules.maven.indexer.spi.ResultImplementation;
 import org.netbeans.modules.maven.indexer.spi.impl.IndexingNotificationProvider;
+import org.netbeans.modules.maven.indexer.spi.impl.ResultImpl;
 import org.openide.modules.Places;
 import org.openide.util.BaseUtilities;
 import org.openide.util.Exceptions;
