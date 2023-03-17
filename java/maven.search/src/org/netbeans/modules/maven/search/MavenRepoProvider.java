@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import org.apache.lucene.search.BooleanQuery;
 import org.netbeans.modules.maven.indexer.api.NBVersionInfo;
 import org.netbeans.modules.maven.indexer.api.QueryField;
 import org.netbeans.modules.maven.indexer.api.RepositoryInfo;
@@ -77,10 +76,16 @@ public class MavenRepoProvider implements SearchProvider {
                     synchronized (tempInfos) {
                         tempInfos.addAll(result.getResults());
                     }
-                } catch (BooleanQuery.TooManyClauses exc) {
-                    // query too general, just ignore it
-                    synchronized (tempInfos) {
-                        tempInfos.clear();
+                } catch (RuntimeException exc) {
+                    // Special case the BooleanQuer.TooManyClauses exception
+                    // without introducing a dependency on lucene
+                    if (exc.getClass().getName().contains("TooManyClauses")) {
+                        // query too general, just ignore it
+                        synchronized (tempInfos) {
+                            tempInfos.clear();
+                        }
+                    } else {
+                        throw exc;
                     }
                 } catch (OutOfMemoryError oome) {
                     // running into OOME may still happen in Lucene despite the fact that

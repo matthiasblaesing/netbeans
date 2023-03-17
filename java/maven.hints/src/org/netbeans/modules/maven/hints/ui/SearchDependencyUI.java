@@ -36,7 +36,6 @@ import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.maven.model.Dependency;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.api.project.Project;
@@ -198,14 +197,20 @@ public class SearchDependencyUI extends javax.swing.JPanel implements ExplorerMa
                             if (cancelled) return;
                             updateResult(result.getResults(), false);
                         }
-                    } catch (BooleanQuery.TooManyClauses exc) {
+                    } catch (RuntimeException exc) {
                         if (cancelled) return;
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                resultsRootNode.setOneChild(getTooGeneralNode());
-                            }
-                        });
+                            // Special case the BooleanQuer.TooManyClauses exception
+                            // without introducing a dependency on lucene
+                        if (exc.getClass().getName().contains("TooManyClauses")) {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    resultsRootNode.setOneChild(getTooGeneralNode());
+                                }
+                            });
+                        } else {
+                            throw exc;
+                        }
                     } catch (OutOfMemoryError oome) {
                         if (cancelled) return;
                         // running into OOME may still happen in Lucene despite the fact that

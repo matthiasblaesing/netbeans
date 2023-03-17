@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
-import org.apache.lucene.search.BooleanQuery;
 import org.netbeans.api.annotations.common.StaticResource;
 import org.netbeans.modules.maven.indexer.api.NBVersionInfo;
 import org.netbeans.modules.maven.indexer.api.QueryField;
@@ -158,13 +157,19 @@ public class FindResultsNode extends AbstractNode {
                     if (result.getReturnedResultCount() != result.getTotalResultCount()) {
                         changer.changeHtmlDisplayName(MSG_Narrow(result.getReturnedResultCount(), result.getTotalResultCount()));
                     }
-                } catch (BooleanQuery.TooManyClauses exc) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            nodes = Collections.singletonList(getTooGeneralNode());
-                        }
-                    });
+                } catch (RuntimeException exc) {
+                    // Special case the BooleanQuer.TooManyClauses exception
+                    // without introducing a dependency on lucene
+                    if (exc.getClass().getName().contains("TooManyClauses")) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                nodes = Collections.singletonList(getTooGeneralNode());
+                            }
+                        });
+                    } else {
+                        throw exc;
+                    }
                 } catch (final OutOfMemoryError oome) {
                     // running into OOME may still happen in Lucene despite the fact that
                     // we are trying hard to prevent it in NexusRepositoryIndexerImpl

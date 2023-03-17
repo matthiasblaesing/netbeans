@@ -55,7 +55,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.tree.TreeSelectionModel;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.project.MavenProject;
@@ -1159,9 +1158,15 @@ public class AddDependencyPanel extends javax.swing.JPanel {
                             }
                         });
                         
-                    } catch (BooleanQuery.TooManyClauses exc) {
+                    } catch (RuntimeException exc) {
                         if (cancel()) return;//we no longer care
                         // if failing, then exclude classes from search..
+
+                        // Special case the BooleanQuer.TooManyClauses exception
+                        // without introducing a dependency on lucene
+                        if(! exc.getClass().getName().contains("TooManyClauses")) {
+                            throw exc;
+                        }
                         try {
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
@@ -1177,16 +1182,22 @@ public class AddDependencyPanel extends javax.swing.JPanel {
                                 if (cancel()) return;//we no longer care
                                 updateResults(result.getResults(), false);
                             }
-                        } catch (BooleanQuery.TooManyClauses exc2) {
-                            // if still failing, report to the user
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    AddDependencyPanel.this.searchField.setForeground(Color.RED);
-                                    AddDependencyPanel.this.nls.setWarningMessage(NbBundle.getMessage(AddDependencyPanel.class, "MSG_TooGeneral")); //NOI18N
-                                    resultsRootNode.setOneChild(getTooGeneralNode());
-                                }
-                            });
+                        } catch (RuntimeException exc2) {
+                            // Special case the BooleanQuer.TooManyClauses exception
+                            // without introducing a dependency on lucene
+                            if (exc2.getClass().getName().contains("TooManyClauses")) {
+                                // if still failing, report to the user
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AddDependencyPanel.this.searchField.setForeground(Color.RED);
+                                        AddDependencyPanel.this.nls.setWarningMessage(NbBundle.getMessage(AddDependencyPanel.class, "MSG_TooGeneral")); //NOI18N
+                                        resultsRootNode.setOneChild(getTooGeneralNode());
+                                    }
+                                });
+                            } else {
+                                throw exc2;
+                            }
                         }
                     } catch (OutOfMemoryError oome) {
                         // running into OOME may still happen in Lucene despite the fact that

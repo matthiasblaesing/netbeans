@@ -154,22 +154,6 @@
                 <friend>org.netbeans.modules.maven.search</friend>
                 <friend>ro.emilianbold.modules.maven.search.remote</friend>
                 <friend>org.netbeans.modules.payara.tooling</friend>
-                <package>org.apache.lucene</package>
-                <package>org.apache.lucene.analysis</package>
-                <package>org.apache.lucene.analysis.standard</package>
-                <package>org.apache.lucene.analysis.tokenattributes</package>
-                <package>org.apache.lucene.document</package>
-                <package>org.apache.lucene.index</package>
-                <package>org.apache.lucene.messages</package>
-                <package>org.apache.lucene.queryParser</package>
-                <package>org.apache.lucene.search</package>
-                <package>org.apache.lucene.search.highlight</package>
-                <package>org.apache.lucene.search.function</package>
-                <package>org.apache.lucene.search.payloads</package>
-                <package>org.apache.lucene.search.spans</package>
-                <package>org.apache.lucene.store</package>
-                <package>org.apache.lucene.util</package>
-                <package>org.apache.lucene.util.cache</package>
                 <package>org.netbeans.modules.maven.indexer.api</package>
                 <package>org.netbeans.modules.maven.indexer.spi</package>
                 <package>org.netbeans.modules.maven.indexer.spi.impl</package>
