@@ -300,7 +300,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
     
     static class Performer<Data> implements ChangeListener {
         final Map delegate;
-        Reference<ContextAction>    owner;
         Reference<Object>   instDelegate = null;
         StatefulMonitor enabler = null;
         ChangeListener weakEnableListener;
@@ -330,10 +329,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
                     ((Performer)o).clear();
                 }
             }
-        }
-        
-        void attach(ContextAction a) {
-            this.owner = new WeakReference<>(a);
         }
         
         /**
@@ -466,10 +461,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
 
         @Override
         public void stateChanged(ChangeEvent e) {
-            ContextAction a = owner.get();
-            if (a != null) {
-                a.updateState();
-            }
         }
         
         @Override
