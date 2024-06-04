@@ -299,8 +299,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
     static class Performer<Data> implements ChangeListener {
         final Map delegate;
         Reference<Object>   instDelegate = null;
-        ChangeListener weakEnableListener;
-        PropertyChangeListener weakActionListener;
         
         public Performer(Map delegate) {
             this.delegate = delegate;
@@ -360,17 +358,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
                 instDelegate = NONE;
             }
             return d;
-        }
-        
-        /**
-         * Called when the manager decides that the action should not be enabled at all.
-         * The Performer should detach from the delegate and enabler.
-         */
-        void detach() {
-            Object inst = instDelegate != null ? instDelegate.get() : null;
-            if (inst instanceof Action) {
-                ((Action)inst).removePropertyChangeListener(weakActionListener);
-            }
         }
 
         @SuppressWarnings("unchecked")
