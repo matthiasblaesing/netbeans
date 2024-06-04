@@ -175,7 +175,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
     }
     
     protected void startListeners() {
-        performer.startListeners();
         global.registerListener(type, this);
         if (enableMonitor != null) {
             fetchEnabledValue();
@@ -185,7 +184,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
     
     protected void stopListeners() {
         global.unregisterListener(type, this);
-        performer.stopListeners();
         if (enableMonitor != null) {
             enableMonitor.removeChangeListener(this);
         }
@@ -301,7 +299,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
     static class Performer<Data> implements ChangeListener {
         final Map delegate;
         Reference<Object>   instDelegate = null;
-        StatefulMonitor enabler = null;
         ChangeListener weakEnableListener;
         PropertyChangeListener weakActionListener;
         
@@ -320,7 +317,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
         }
         
         void clear() {
-            stopListeners();
             Reference<Object> r = instDelegate;
             instDelegate = null;
             if (r != null) {
@@ -366,26 +362,11 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
             return d;
         }
         
-        void stopListeners() {
-            if (enabler != null) {
-                enabler.removeChangeListener(weakEnableListener);
-                weakEnableListener = null;
-            }
-        }
-
-        void startListeners() {
-            if (enabler != null) {
-                weakEnableListener = WeakListeners.change(this, enabler);
-                enabler.addChangeListener(weakEnableListener);
-            }
-        }
-        
         /**
          * Called when the manager decides that the action should not be enabled at all.
          * The Performer should detach from the delegate and enabler.
          */
         void detach() {
-            stopListeners();
             Object inst = instDelegate != null ? instDelegate.get() : null;
             if (inst instanceof Action) {
                 ((Action)inst).removePropertyChangeListener(weakActionListener);
