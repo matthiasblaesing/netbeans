@@ -35,13 +35,11 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Lookup;
 import org.openide.util.Mutex;
-import org.openide.util.WeakListeners;
 
 /** A delegate action that is usually associated with a specific lookup and
  * listens on certain classes to appear and disappear there.
@@ -102,10 +100,12 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
 
     /** Invoked when an action occurs.
      */
+    @Override
     public void actionPerformed(final java.awt.event.ActionEvent e) {
         global.actionPerformed(e, performer, type, selectMode);
     }
 
+    @Override
     public boolean isEnabled() {
         assert EventQueue.isDispatchThread();
         boolean r;
@@ -189,9 +189,11 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
         }
     }
 
+    @Override
     public void putValue(String key, Object o) {
     }
 
+    @Override
     public Object getValue(String key) {
         if ("enabler".equals(key)) { // NOI18N
             // special API to support re-enablement
@@ -209,6 +211,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
         return null;
     }
 
+    @Override
     public void setEnabled(boolean b) {
     }
     
@@ -267,8 +270,9 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
 
     /** Clones itself with given context.
      */
+    @Override
     public Action createContextAwareInstance(Lookup actionContext) {
-        return  new ContextAction<T>(performer, selectMode, actionContext, type, global.isSurvive(),
+        return  new ContextAction<>(performer, selectMode, actionContext, type, global.isSurvive(),
             enableMonitor == null ? null : enableMonitor.createContextMonitor(actionContext));
     }
 
@@ -298,7 +302,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
     
     static class Performer<Data> implements ChangeListener {
         final Map delegate;
-        Reference<Object>   instDelegate = null;
+        Reference<Object> instDelegate = null;
         
         public Performer(Map delegate) {
             this.delegate = delegate;
@@ -308,7 +312,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
             ContextActionPerformer<Data> p,
             ContextActionEnabler<Data> e
         ) {
-            Map<Object, Object> map = new HashMap<Object, Object>();
+            Map<Object, Object> map = new HashMap<>();
             map.put("delegate", p); // NOI18N
             map.put("enabler", e);  // NOI18N
             this.delegate = map;
@@ -372,7 +376,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
                 return en.enabled(data);
             }
 
-            GeneralAction.LOG.warning("Wrong enabler for " + delegate + ":" + o);
+            GeneralAction.LOG.log(Level.WARNING, "Wrong enabler for {0}:{1}", new Object[]{delegate, o});
             return false;
         }
         
@@ -385,7 +389,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
                 return obj;
             }
             if (!(obj instanceof ActionListener)) {
-                GeneralAction.LOG.warning("Wrong delegate for " + delegate + ":" + obj);
+                GeneralAction.LOG.log(Level.WARNING, "Wrong delegate for {0}:{1}", new Object[]{delegate, obj});
             }
             return obj;
         }
