@@ -298,8 +298,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
         return false;
     }
 
-    private static final Reference<Object> NONE = new WeakReference<>(null);
-
     static class Performer<Data> implements ChangeListener {
         final Map delegate;
         Reference<Object> instDelegate = null;
@@ -362,7 +360,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
                 }
                 instDelegate = new WeakReference<>(d);
             } else {
-                instDelegate = NONE;
+                instDelegate = null;
             }
             return d;
         }
