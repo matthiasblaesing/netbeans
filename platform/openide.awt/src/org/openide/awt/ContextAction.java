@@ -120,7 +120,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
 
     private boolean fetchEnabledValue() {
         return global.runEnabled(type, selectMode, (all, everything) -> {
-            Supplier<Action> af = () -> (Action)performer.delegate0(everything, all, true);
+            Supplier<Action> af = () -> (Action)performer.delegate(everything, all);
             if (enableMonitor.getType() == Action.class) {
                 // special case for monitoring the action itself
                 Action dele = (Action)performer.delegate(everything, all);
@@ -298,7 +298,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
         return false;
     }
 
-    static class Performer<Data> implements ChangeListener {
+    static class Performer<Data> {
         final Map delegate;
         Reference<Object> instDelegate = null;
 
@@ -430,10 +430,6 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
                 return delegate.equals(l.delegate);
             }
             return false;
-        }
-
-        @Override
-        public void stateChanged(ChangeEvent e) {
         }
 
         @Override
