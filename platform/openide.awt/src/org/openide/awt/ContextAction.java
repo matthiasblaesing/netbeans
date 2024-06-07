@@ -300,6 +300,8 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
 
     static class Performer<Data> {
         final Map delegate;
+        // Guard for instDelegate to check if lookup changed for a ContextAwareAction
+        private WeakReference<Lookup> instDelegateLookup = null;
         Reference<Object> instDelegate = null;
 
         public Performer(Map delegate) {
@@ -338,7 +340,14 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
         }
 
         private Object delegate0(Lookup.Provider everything, List<?> data, boolean getAction) {
+            Lookup targetLookup = everything.getLookup();
             Object d = instDelegate != null ? instDelegate.get() : null;
+            if(d instanceof ContextAwareAction) {
+                Lookup lastTargetLookup = instDelegateLookup == null ? null : instDelegateLookup.get();
+                if(! Objects.equals(targetLookup, lastTargetLookup)) {
+                    d = null;
+                }
+            }
             if (d != null) {
                 if (getAction && (d instanceof Performer)) {
                     return ((Performer)d).delegate0(everything, data, getAction);
@@ -356,7 +365,8 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
                     return ((Performer)d).delegate0(everything, data, getAction);
                 }
                 if (d instanceof ContextAwareAction) {
-                    d = ((ContextAwareAction)d).createContextAwareInstance(everything.getLookup());
+                    d = ((ContextAwareAction)d).createContextAwareInstance(targetLookup);
+                    instDelegateLookup = new WeakReference<>(targetLookup);
                 }
                 instDelegate = new WeakReference<>(d);
             } else {

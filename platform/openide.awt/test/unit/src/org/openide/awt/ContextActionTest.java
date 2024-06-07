@@ -924,4 +924,51 @@ implements Lookup.Provider, ContextActionEnabler<ContextActionTest.Openable> {
         
         assertTrue(listenerB.propChanges.contains(Action.SELECTED_KEY));
     }
+
+
+    @ActionID(category = "test", id = "OutputTestAction")
+    @ActionRegistration(displayName = "Dummy", lazy = true) //NOI18N
+    public static class OutputTestAction extends AbstractAction implements ContextAwareAction {
+
+        public static String actionResult;
+
+        private Lookup ctx;
+
+        public OutputTestAction(String text) {
+            this.ctx = Lookups.fixed(text);
+        }
+
+        private OutputTestAction(Lookup ctx) {
+            this.ctx = ctx;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            System.out.println(this.ctx.lookup(String.class));
+            actionResult = this.ctx.lookup(String.class);
+        }
+
+        @Override
+        public Action createContextAwareInstance(Lookup actionContext) {
+            return new OutputTestAction(ctx);
+        }
+
+    }
+
+    public void testContextAwareInstanceInvokesWithCorrectContext() throws InterruptedException, InvocationTargetException {
+        ContextAwareAction baseCAA = (ContextAwareAction) Actions.forID("test", "OutputTestAction");
+
+        Lookup l1 = Lookups.fixed("Lookup 1");
+        Lookup l2 = Lookups.fixed("Lookup 2");
+
+        Action cai1 = baseCAA.createContextAwareInstance(l1);
+        Action cai2 = baseCAA.createContextAwareInstance(l2);
+
+        cai1.actionPerformed(new ActionEvent(new Object(), 1, "blah"));
+        assertEquals("Lookup 1", OutputTestAction.actionResult);
+        cai2.actionPerformed(new ActionEvent(new Object(), 2, "blah"));
+        assertEquals("Lookup 2", OutputTestAction.actionResult);
+        cai1.actionPerformed(new ActionEvent(new Object(), 3, "blah"));
+        assertEquals("Lookup 1", OutputTestAction.actionResult);
+    }
 }
