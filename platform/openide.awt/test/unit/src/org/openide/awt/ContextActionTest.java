@@ -930,6 +930,7 @@ implements Lookup.Provider, ContextActionEnabler<ContextActionTest.Openable> {
     @ActionRegistration(displayName = "Dummy", lazy = true) //NOI18N
     public static class OutputTestAction extends AbstractAction implements ContextAwareAction {
 
+        // Record the result string from the last action invocation
         public static String actionResult;
 
         private Lookup ctx;
@@ -964,11 +965,19 @@ implements Lookup.Provider, ContextActionEnabler<ContextActionTest.Openable> {
         Action cai1 = baseCAA.createContextAwareInstance(l1);
         Action cai2 = baseCAA.createContextAwareInstance(l2);
 
-        cai1.actionPerformed(new ActionEvent(new Object(), 1, "blah"));
+        runOnEdt(() -> cai1.actionPerformed(new ActionEvent(new Object(), 1, "blah")));
         assertEquals("Lookup 1", OutputTestAction.actionResult);
-        cai2.actionPerformed(new ActionEvent(new Object(), 2, "blah"));
+        runOnEdt(() -> cai2.actionPerformed(new ActionEvent(new Object(), 2, "blah")));
         assertEquals("Lookup 2", OutputTestAction.actionResult);
-        cai1.actionPerformed(new ActionEvent(new Object(), 3, "blah"));
+        runOnEdt(() -> cai1.actionPerformed(new ActionEvent(new Object(), 3, "blah")));
         assertEquals("Lookup 1", OutputTestAction.actionResult);
+    }
+
+    private void runOnEdt(Runnable runnable) throws InterruptedException, InvocationTargetException {
+        if(EventQueue.isDispatchThread()) {
+            runnable.run();
+        } else {
+            EventQueue.invokeAndWait(runnable);
+        }
     }
 }
