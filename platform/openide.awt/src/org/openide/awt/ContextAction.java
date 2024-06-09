@@ -344,7 +344,7 @@ implements Action, ContextAwareAction, ChangeListener, Runnable {
             Object d = instDelegate != null ? instDelegate.get() : null;
             if(d instanceof ContextAwareAction) {
                 Lookup lastTargetLookup = instDelegateLookup == null ? null : instDelegateLookup.get();
-                if(! Objects.equals(targetLookup, lastTargetLookup)) {
+                if(targetLookup != lastTargetLookup) {
                     d = null;
                 }
             }
