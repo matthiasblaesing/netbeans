@@ -47,7 +47,6 @@ import org.openide.util.*;
 public class SvgNavigatorPanel implements NavigatorPanel {
 
     private static final Logger LOG = Logger.getLogger(SVGViewerElement.class.getName());
-    private final SVGLoader svgLoader = new SVGLoader();
 
     /**
      * holds UI of this panel
@@ -103,11 +102,13 @@ public class SvgNavigatorPanel implements NavigatorPanel {
         // get actual data and recompute content
         Collection<? extends SVGDataObject> data = currentContext.allInstances();
         currentDataObject = getDataObject(data);
+
         if (currentDataObject == null) {
             return;
         }
+
         if (fileChangeListener == null) {
-            fileChangeListener = new ImageFileChangeAdapter();
+            fileChangeListener = new SvgFileChangeAdapter();
         }
         currentDataObject.getPrimaryFile().addFileChangeListener(fileChangeListener);
         setNewContent(currentDataObject);
@@ -137,14 +138,21 @@ public class SvgNavigatorPanel implements NavigatorPanel {
         WORKER.post(() -> {
             FileObject fo = dataObject.getPrimaryFile();
 
-            if ((fo != null) && (panelUI != null)) {
-                try {
-                    SVGDocument svgDocument = svgLoader.load(fo.toURL());
+            if (fo == null) {
+                return;
+            }
 
-                    panelUI.setSvg(svgDocument);
-                } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, ex.getMessage());
-                }
+            if (panelUI == null) {
+                return;
+            }
+
+            try {
+                SVGLoader svgLoader = new SVGLoader();
+                SVGDocument svgDocument = svgLoader.load(fo.toURL());
+
+                SwingUtilities.invokeLater(() -> panelUI.setSvg(svgDocument));
+            } catch (Exception ex) {
+                LOG.log(Level.SEVERE, ex.getMessage());
             }
         });
     }
@@ -179,7 +187,7 @@ public class SvgNavigatorPanel implements NavigatorPanel {
         }
     }
 
-    private class ImageFileChangeAdapter extends FileChangeAdapter {
+    private class SvgFileChangeAdapter extends FileChangeAdapter {
 
         @Override
         public void fileChanged(final FileEvent fe) {

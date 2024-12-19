@@ -32,7 +32,7 @@ import org.openide.util.NbBundle;
 /**
  * JPanel used for SVG preview in Navigator window
  *
- * @author jpeska
+ * @author christian lenz
  */
 public class SvgPreviewPanel extends JPanel {
 
