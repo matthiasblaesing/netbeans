@@ -28,6 +28,9 @@ import org.netbeans.modules.xml.sync.Synchronizator;
 import org.netbeans.spi.xml.cookies.CheckXMLSupport;
 import org.netbeans.spi.xml.cookies.DataObjectAdapters;
 import org.netbeans.spi.xml.cookies.ValidateXMLSupport;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.HtmlBrowser;
 import org.openide.cookies.ViewCookie;
 import org.openide.filesystems.*;
@@ -56,6 +59,21 @@ import org.xml.sax.InputSource;
     iconBase = "org/netbeans/modules/svg/resources/svgLogo.png",
     displayName = "#LBL_Svg_LOADER",
     position = 300
+)
+@ActionReferences(value = {
+    @ActionReference(id = @ActionID(category = "System", id = "org.openide.actions.OpenAction"), path = "Loaders/image/svg+xml/Actions", position = 100),
+    @ActionReference(id = @ActionID(category = "System", id = "org.openide.actions.ViewAction"), path = "Loaders/image/svg+xml/Actions", position = 200, separatorAfter = 400),
+    @ActionReference(id = @ActionID(category = "XML", id = "org.netbeans.modules.xml.tools.actions.CheckAction"), path = "Loaders/image/svg+xml/Actions", position = 600),
+    @ActionReference(id = @ActionID(category = "XML", id = "org.netbeans.modules.xml.tools.actions.ValidateAction"), path = "Loaders/image/svg+xml/Actions", position = 700, separatorAfter = 750),
+    @ActionReference(id = @ActionID(category = "Edit", id = "org.openide.actions.CutAction"), path = "Loaders/image/svg+xml/Actions", position = 800),
+    @ActionReference(id = @ActionID(category = "Edit", id = "org.openide.actions.CopyAction"), path = "Loaders/image/svg+xml/Actions", position = 900),
+    @ActionReference(id = @ActionID(category = "Edit", id = "org.openide.actions.PasteAction"), path = "Loaders/image/svg+xml/Actions", position = 1000, separatorAfter = 1100),
+    @ActionReference(id = @ActionID(category = "Edit", id = "org.openide.actions.DeleteAction"), path = "Loaders/image/svg+xml/Actions", position = 1200),
+    @ActionReference(id = @ActionID(category = "System", id = "org.openide.actions.RenameAction"), path = "Loaders/image/svg+xml/Actions", position = 1300, separatorAfter = 1400),
+    @ActionReference(id = @ActionID(category = "System", id = "org.openide.actions.SaveAsTemplateAction"), path = "Loaders/image/svg+xml/Actions", position = 1500),
+    @ActionReference(id = @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"), path = "Loaders/image/svg+xml/Actions", position = 1550, separatorAfter = 1600),
+    @ActionReference(id = @ActionID(category = "System", id = "org.openide.actions.ToolsAction"), path = "Loaders/image/svg+xml/Actions", position = 1700),
+    @ActionReference(id = @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"), path = "Loaders/image/svg+xml/Actions", position = 1800)}
 )
 public final class SVGDataObject extends MultiDataObject implements XMLDataObjectLook, UpdateDocumentCookie {
 
@@ -130,7 +148,7 @@ public final class SVGDataObject extends MultiDataObject implements XMLDataObjec
 
     private static final class ViewSupport implements ViewCookie {
 
-        private MultiDataObject.Entry primary;
+        private final MultiDataObject.Entry primary;
 
         public ViewSupport(MultiDataObject.Entry primary) {
             this.primary = primary;

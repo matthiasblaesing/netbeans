@@ -18,20 +18,24 @@
  */
 package org.netbeans.modules.svg;
 
-import java.io.IOException;
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.geometry.size.FloatSize;
+import com.github.weisj.jsvg.parser.SVGLoader;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.dom.util.SAXIOException;
-import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.util.XMLResourceDescriptor;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
+import org.netbeans.modules.svg.toolbar.SVGViewerToolbar;
 import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileChangeListener;
@@ -40,7 +44,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
-import org.w3c.dom.svg.SVGDocument;
 
 /**
  *
@@ -61,11 +64,30 @@ public class SVGViewerElement implements MultiViewElement {
 
     private final SVGDataObject dataObject;
     private transient JToolBar toolbar;
-
     private transient JComponent component;
+
+    /**
+     * Component showing SVG.
+     */
     private transient JPanel viewer;
 
-    private final JSVGCanvas svgCanvas = new JSVGCanvas(new ConsoleLoggingUserAgent(), true, true);
+    private final SVGLoader svgLoader = new SVGLoader();
+    private final SVGPanel svgPanel = new SVGPanel();
+    private SVGDocument svgDocument = null;
+
+    private int imageHeight = 0;
+    private int imageWidth = 0;
+    private long imageSize = -1;
+
+    /**
+     * Scale of SVG.
+     */
+    private double scale = 1.0D;
+
+    /**
+     * Increase/decrease factor.
+     */
+    private final double changeFactor = Math.sqrt(2.0D);
 
     private final FileChangeListener fcl = new FileChangeAdapter() {
         @Override
@@ -91,7 +113,7 @@ public class SVGViewerElement implements MultiViewElement {
     @Override
     public JComponent getToolbarRepresentation() {
         if (toolbar == null) {
-            toolbar = new JToolBar();
+            toolbar = new SVGViewerToolbar().createToolbar(this);
         }
 
         return toolbar;
@@ -110,6 +132,7 @@ public class SVGViewerElement implements MultiViewElement {
     @Override
     public void componentOpened() {
         dataObject.getPrimaryFile().addFileChangeListener(fcl);
+
         updateView();
     }
 
@@ -148,28 +171,181 @@ public class SVGViewerElement implements MultiViewElement {
         return CloseOperationState.STATE_OK;
     }
 
+    private void addMouseWheelListenerToViewer(JScrollPane scrollPane) {
+        svgPanel.addMouseWheelListener(e -> {
+            double oldScale = scale;
+
+            // Point in scrolled pane
+            Point visiblePoint = e.getPoint();
+
+            // "Picturepixel"
+            Point markedPoint = new Point(
+                (int) (visiblePoint.getX() / oldScale),
+                (int) (visiblePoint.getY() / oldScale));
+
+            int clicks = e.getWheelRotation();
+            int clicks_abs = Math.abs(clicks);
+            for (int i = 0; i < clicks_abs; i++) {
+                if (clicks < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+
+            double newScale = scale;
+
+            Point markedPointInRealSpace = new Point(
+                (int) (markedPoint.getX() * newScale),
+                (int) (markedPoint.getY() * newScale)
+            );
+
+            Rectangle r = scrollPane.getViewport().getViewRect();
+
+            r.setLocation(markedPointInRealSpace);
+            r.translate(-r.width / 2, -r.height / 2);
+
+            svgPanel.scrollRectToVisible(r);
+        });
+    }
+
     private void updateView() {
         FileObject fo = dataObject.getPrimaryFile();
 
-        if ((fo != null) && (viewer != null)) {
-            String parser = XMLResourceDescriptor.getXMLParserClassName();
-            SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
-
-            try {
-                String uri = fo.toURL().toString();
-                svgCanvas.setURI(uri);
-
-                SVGDocument doc = factory.createSVGDocument(uri);
-
-                svgCanvas.setSVGDocument(doc);
-                viewer.add(svgCanvas);
-            } catch (SAXIOException ex) {
-                LOG.log(Level.SEVERE, ex.getMessage());
-            } catch (IOException ex) {
-                LOG.log(Level.SEVERE, ex.getMessage());
-            } catch (Exception ex) {
-                LOG.log(Level.SEVERE, ex.getMessage());
-            }
+        if (fo == null) {
+            return;
         }
+
+        if (viewer == null) {
+            return;
+        }
+
+        svgDocument = svgLoader.load(fo.toURL());
+
+        if (svgDocument == null) {
+            return;
+        }
+
+        FloatSize size = svgDocument.size();
+        int width = (int) size.width;
+        int height = (int) size.height;
+
+        imageWidth = width;
+        imageHeight = height;
+
+        imageSize = fo.getSize();
+
+        if (width <= 0 || height <= 0) {
+            LOG.log(Level.WARNING, "Invalid SVG dimensions: width={0}, height={1}", new Object[]{width, height});
+
+            return;
+        }
+
+        viewer.setLayout(new BorderLayout());
+
+        svgPanel.setPreferredSize(new Dimension(width, height));
+        svgPanel.setSvgDocument(svgDocument);
+
+        JScrollPane scrollPane = new JScrollPane(svgPanel);
+
+        viewer.add(scrollPane, BorderLayout.CENTER);
+
+        addMouseWheelListenerToViewer(scrollPane);
+
+        viewer.revalidate();
+        viewer.repaint();
+    }
+
+    public float getImageSize() {
+        return imageSize;
+    }
+
+    public float getImageWidth() {
+        return imageWidth;
+    }
+
+    public float getImageHeight() {
+        return imageHeight;
+    }
+
+    /**
+     * Perform zoom with specific proportion.
+     *
+     * @param fx numerator for scaled
+     * @param fy denominator for scaled
+     */
+    public void customZoom(int fx, int fy) {
+        double oldScale = scale;
+
+        scale = (double) fx / (double) fy;
+        if (!isNewSizeOK()) {
+            scale = oldScale;
+
+            return;
+        }
+
+        svgPanel.setScale(scale);
+
+        resizePanel();
+    }
+
+    /**
+     * Draws zoom in scaled image.
+     */
+    public void zoomIn() {
+        scale *= changeFactor;
+
+        if (isNewSizeOK()) {
+            svgPanel.setScale(scale);
+
+            resizePanel();
+        } else {
+            scale /= changeFactor;
+        }
+    }
+
+    /**
+     * Draws zoom out scaled image.
+     */
+    public void zoomOut() {
+        scale /= changeFactor;
+
+        if (isNewSizeOK()) {
+            svgPanel.setScale(scale);
+
+            resizePanel();
+        } else {
+            scale *= changeFactor;
+        }
+    }
+
+    public void changeBackground(BackgroundMode bgMode) {
+        svgPanel.setBackgroundMode(bgMode);
+
+        viewer.revalidate();
+        viewer.repaint();
+    }
+
+    /**
+     * Resizes panel.
+     */
+    private void resizePanel() {
+        int newWidth = (int) (svgDocument.size().getWidth() * scale);
+        int newHeight = (int) (svgDocument.size().getHeight() * scale);
+
+        svgPanel.setBounds(0, 0, newWidth, newHeight);
+        svgPanel.setPreferredSize(new Dimension(newWidth, newHeight));
+
+        viewer.revalidate();
+        viewer.repaint();
+    }
+
+    /**
+     * Tests new size of image. If image is smaller than minimum size(1x1)
+     * zooming will be not performed.
+     */
+    private boolean isNewSizeOK() {
+        return (scale * svgDocument.size().getWidth() > 1)
+            && (scale * svgDocument.size().getHeight() > 1);
     }
 }
