@@ -40,6 +40,7 @@
         <file>src/org/netbeans/modules/xml/resources/dtdObject.gif</file>
         <file>src/org/netbeans/modules/xml/resources/blank.gif</file>
         <file>src/org/netbeans/modules/xml/resources/xmlObject32.gif</file>
+        <file>src/org/netbeans/modules/xml/resources/svgLogo.png</file>
         <file>src/org/netbeans/modules/xml/wizard/impl/folder_opened.png</file>
         <file>src/org/netbeans/modules/xml/wizard/impl/folder_closed.png</file>
         <license ref="Apache-2.0-ASF" />

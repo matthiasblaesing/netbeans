@@ -73,6 +73,9 @@
                 <package>org.apache.batik.ext.awt.g2d</package>
                 <package>org.apache.batik.ext.awt.geom</package>
                 <package>org.apache.batik.ext.awt.image</package>
+                <package>org.apache.batik.ext.awt.image.codec.imageio</package>
+                <package>org.apache.batik.ext.awt.image.codec.png</package>
+                <package>org.apache.batik.ext.awt.image.codec.util</package>
                 <package>org.apache.batik.ext.awt.image.renderable</package>
                 <package>org.apache.batik.ext.awt.image.rendered</package>
                 <package>org.apache.batik.ext.awt.image.spi</package>
@@ -89,7 +92,13 @@
                 <package>org.apache.batik.script</package>
                 <package>org.apache.batik.script.jpython</package>
                 <package>org.apache.batik.script.rhino</package>
+                <package>org.apache.batik.swing</package>
+                <package>org.apache.batik.swing.gvt</package>
+                <package>org.apache.batik.swing.svg</package>
                 <package>org.apache.batik.util</package>
+                <package>org.apache.batik.util.gui</package>
+                <package>org.apache.batik.util.gui.resource</package>
+                <package>org.apache.batik.util.gui.xmleditor</package>
                 <package>org.apache.batik.util.io</package>
                 <package>org.apache.batik.util.resources</package>
                 <package>org.apache.batik.w3c.dom</package>
@@ -135,60 +144,60 @@
                 <package>org.w3c.dom.svg</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-constants-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-constants-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-constants-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-constants-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-util-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-util-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-util-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-util-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-svg-dom-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-svg-dom-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-svg-dom-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-svg-dom-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-xml-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-xml-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-xml-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-xml-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-anim-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-anim-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-anim-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-anim-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-gvt-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-gvt-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-gvt-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-gvt-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-dom-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-dom-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-dom-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-dom-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-bridge-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-bridge-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-bridge-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-bridge-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-css-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-css-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-css-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-css-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-i18n-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-i18n-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-i18n-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-i18n-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-ext-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-ext-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-ext-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-ext-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-script-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-script-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-script-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-script-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/xmlgraphics-commons-2.9.jar</runtime-relative-path>
-                <binary-origin>external/xmlgraphics-commons-2.9.jar</binary-origin>
+                <runtime-relative-path>ext/xmlgraphics-commons-2.10.jar</runtime-relative-path>
+                <binary-origin>external/xmlgraphics-commons-2.10.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-parser-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-parser-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-parser-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-parser-1.18.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/xml-apis-1.4.01.jar</runtime-relative-path>
@@ -199,8 +208,20 @@
                 <binary-origin>external/xml-apis-ext-1.3.04.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/batik-awt-util-1.17.jar</runtime-relative-path>
-                <binary-origin>external/batik-awt-util-1.17.jar</binary-origin>
+                <runtime-relative-path>ext/batik-awt-util-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-awt-util-1.18.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/batik-swing-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-swing-1.18.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/batik-gui-util-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-gui-util-1.18.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/batik-codec-1.18.jar</runtime-relative-path>
+                <binary-origin>external/batik-codec-1.18.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

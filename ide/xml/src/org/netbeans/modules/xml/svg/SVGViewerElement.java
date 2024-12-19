@@ -19,12 +19,15 @@
 package org.netbeans.modules.xml.svg;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.dom.util.SAXIOException;
+import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -34,7 +37,6 @@ import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileChangeListener;
 import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
@@ -42,11 +44,11 @@ import org.w3c.dom.svg.SVGDocument;
 
 /**
  *
- * @author Chris
+ * @author Christian Lenz
  */
 @MultiViewElement.Registration(
     displayName = "#LBL_SVGViewer",
-    iconBase = "org/netbeans/modules/xml/resources/xmlObject.gif",
+    iconBase = "org/netbeans/modules/xml/resources/svgLogo.png",
     mimeType = "image/svg+xml",
     persistenceType = TopComponent.PERSISTENCE_NEVER,
     preferredID = "SVGViewer",
@@ -63,12 +65,13 @@ public class SVGViewerElement implements MultiViewElement {
     private transient JComponent component;
     private transient JPanel viewer;
 
+    private final JSVGCanvas svgCanvas = new JSVGCanvas(new ConsoleLoggingUserAgent(), true, true);
+
     private final FileChangeListener fcl = new FileChangeAdapter() {
         @Override
         public void fileChanged(FileEvent fe) {
             updateView();
         }
-
     };
 
     public SVGViewerElement(Lookup lookup) {
@@ -81,6 +84,7 @@ public class SVGViewerElement implements MultiViewElement {
             viewer = new JPanel();
             component = viewer;
         }
+
         return component;
     }
 
@@ -89,6 +93,7 @@ public class SVGViewerElement implements MultiViewElement {
         if (toolbar == null) {
             toolbar = new JToolBar();
         }
+
         return toolbar;
     }
 
@@ -143,22 +148,23 @@ public class SVGViewerElement implements MultiViewElement {
         return CloseOperationState.STATE_OK;
     }
 
-    private JSVGCanvas svgCanvas = new JSVGCanvas();
-
-    @Messages("TXT_MarkdownViewerElement_Error=<html>Something happened during markdown parsing.")
     private void updateView() {
         FileObject fo = dataObject.getPrimaryFile();
+
         if ((fo != null) && (viewer != null)) {
             String parser = XMLResourceDescriptor.getXMLParserClassName();
-            SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
-            String uri = "https://upload.wikimedia.org/wikipedia/commons/b/bd/Test.svg";
-//            String uri = fo.getPath();
+            SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
 
             try {
-                SVGDocument doc = (SVGDocument) f.createDocument(uri);
-                viewer.add(doc.getRootElement().);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+                String uri = fo.toURL().toString();
+                svgCanvas.setURI(uri);
+
+                SVGDocument doc = factory.createSVGDocument(uri);
+
+                svgCanvas.setSVGDocument(doc);
+                viewer.add(svgCanvas);
+            } catch (SAXIOException | IOException | Exception ex) {
+                LOG.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
