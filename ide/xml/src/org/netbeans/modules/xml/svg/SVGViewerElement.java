@@ -163,7 +163,11 @@ public class SVGViewerElement implements MultiViewElement {
 
                 svgCanvas.setSVGDocument(doc);
                 viewer.add(svgCanvas);
-            } catch (SAXIOException | IOException | Exception ex) {
+            } catch (SAXIOException ex) {
+                LOG.log(Level.SEVERE, ex.getMessage());
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, ex.getMessage());
+            } catch (Exception ex) {
                 LOG.log(Level.SEVERE, ex.getMessage());
             }
         }
