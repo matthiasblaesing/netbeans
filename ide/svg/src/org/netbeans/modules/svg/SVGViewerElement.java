@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.xml.svg;
+package org.netbeans.modules.svg;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -48,7 +48,7 @@ import org.w3c.dom.svg.SVGDocument;
  */
 @MultiViewElement.Registration(
     displayName = "#LBL_SVGViewer",
-    iconBase = "org/netbeans/modules/xml/resources/svgLogo.png",
+    iconBase = "org/netbeans/modules/svg/resources/svgLogo.png",
     mimeType = "image/svg+xml",
     persistenceType = TopComponent.PERSISTENCE_NEVER,
     preferredID = "SVGViewer",

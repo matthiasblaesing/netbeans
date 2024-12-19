@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.netbeans.modules.xml.svg;
+package org.netbeans.modules.svg;
 
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
@@ -53,7 +53,7 @@ import org.xml.sax.InputSource;
 )
 @DataObject.Registration(
     mimeType = SVGDataObject.MIME_TYPE,
-    iconBase = "org/netbeans/modules/xml/resources/svgLogo.png",
+    iconBase = "org/netbeans/modules/svg/resources/svgLogo.png",
     displayName = "#LBL_Svg_LOADER",
     position = 300
 )
@@ -99,8 +99,8 @@ public final class SVGDataObject extends MultiDataObject implements XMLDataObjec
     }
 
     @MultiViewElement.Registration(
-        displayName = "org.netbeans.modules.xml.Bundle#CTL_SourceTabCaption",
-        iconBase = "org/netbeans/modules/xml/resources/svgLogo.png",
+        displayName = "org.netbeans.modules.svg.Bundle#CTL_SourceTabCaption",
+        iconBase = "org/netbeans/modules/svg/resources/svgLogo.png",
         persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
         preferredID = "SVG",
         mimeType = MIME_TYPE,
@@ -121,7 +121,7 @@ public final class SVGDataObject extends MultiDataObject implements XMLDataObjec
         @Override
         public Node.Cookie createCookie(Class klass) {
             if (klass == ViewCookie.class) {
-                return new ViewSupport(org.netbeans.modules.xml.svg.SVGDataObject.this.getPrimaryEntry());
+                return new ViewSupport(org.netbeans.modules.svg.SVGDataObject.this.getPrimaryEntry());
             } else {
                 return null;
             }

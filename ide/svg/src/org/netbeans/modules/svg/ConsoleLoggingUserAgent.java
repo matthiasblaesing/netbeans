@@ -1,4 +1,4 @@
-package org.netbeans.modules.xml.svg;
+package org.netbeans.modules.svg;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
