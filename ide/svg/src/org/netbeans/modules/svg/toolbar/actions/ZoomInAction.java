@@ -41,7 +41,7 @@ public class ZoomInAction extends CallableSystemAction {
 
     private SVGViewerElement svgViewerElement;
 
-    public void setSvgViewerElement(SVGViewerElement svgViewerElement) {
+    public void setSVGViewerElement(SVGViewerElement svgViewerElement) {
         this.svgViewerElement = svgViewerElement;
     }
 

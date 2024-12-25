@@ -65,6 +65,7 @@ public class SVGViewerElement implements MultiViewElement {
     private final SVGDataObject dataObject;
     private transient JToolBar toolbar;
     private transient JComponent component;
+    private transient MultiViewElementCallback callback;
 
     /**
      * Component showing SVG.
@@ -121,7 +122,7 @@ public class SVGViewerElement implements MultiViewElement {
 
     @Override
     public Action[] getActions() {
-        return new Action[0];
+        return callback.createDefaultActions();
     }
 
     @Override
@@ -164,6 +165,7 @@ public class SVGViewerElement implements MultiViewElement {
 
     @Override
     public void setMultiViewCallback(MultiViewElementCallback callback) {
+        this.callback = callback;
     }
 
     @Override
@@ -244,7 +246,7 @@ public class SVGViewerElement implements MultiViewElement {
         viewer.setLayout(new BorderLayout());
 
         svgPanel.setPreferredSize(new Dimension(width, height));
-        svgPanel.setSvgDocument(svgDocument);
+        svgPanel.setSVGDocument(svgDocument);
 
         JScrollPane scrollPane = new JScrollPane(svgPanel);
 

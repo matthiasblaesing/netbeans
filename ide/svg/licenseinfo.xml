@@ -21,11 +21,8 @@
 -->
 <licenseinfo>
   <fileset>
-    <file>src/org/netbeans/modules/svg/resources/svgLogo.svg</file>
     <file>src/org/netbeans/modules/svg/resources/svgLogo.png</file>
     <license ref="Apache-2.0-ASF" />
-    <comment type="COMMENT_UNSUPPORTED">
-      Images for the SVG filetype
-    </comment>
+    <comment type="COMMENT_UNSUPPORTED" />
   </fileset>
 </licenseinfo>

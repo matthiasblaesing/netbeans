@@ -46,22 +46,20 @@ public class BackgroundIcon implements Icon {
         int height = getIconHeight();
 
         switch (bgMode) {
-            case BLACK:
+            case BLACK -> {
                 g2d.setColor(Color.BLACK);
                 g2d.fillRect(x, y, width, height);
-                break;
-            case WHITE:
+            }
+            case WHITE -> {
                 g2d.setColor(Color.WHITE);
                 g2d.fillRect(x, y, width, height);
-                break;
-            case TRANSPARENT:
-            case DARK_TRANSPARENT:
+            }
+            case TRANSPARENT, DARK_TRANSPARENT ->
                 Utils.drawSmallChestTilePattern(g2d, x, y, width, height, bgMode == BackgroundMode.DARK_TRANSPARENT);
-                break;
-            case DEFAULT:
+            case DEFAULT -> {
                 g2d.setColor(defaultColor);
                 g2d.fillRect(x, y, width, height);
-                break;
+            }
         }
     }
 

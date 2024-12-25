@@ -55,7 +55,7 @@ public class SVGViewerToolbar {
         // Initialisiere die CustomZoomAction nur einmal
         if (customZoomAction == null) {
             customZoomAction = new CustomZoomAction();
-            customZoomAction.setSvgViewerElement(svgViewerElement);
+            customZoomAction.setSVGViewerElement(svgViewerElement);
         }
 
         JToolBar toolBar = new JToolBar();
@@ -66,7 +66,7 @@ public class SVGViewerToolbar {
         toolBar.getAccessibleContext().setAccessibleDescription(NbBundle.getMessage(SVGViewerToolbar.class, "ACSD_Toolbar"));
 
         ZoomOutAction zoomOutAction = new ZoomOutAction();
-        zoomOutAction.setSvgViewerElement(svgViewerElement);
+        zoomOutAction.setSVGViewerElement(svgViewerElement);
         JButton outButton = new JButton(zoomOutAction);
         outButton.setIcon(ImageUtilities.loadImageIcon("org/netbeans/modules/image/zoomOut.gif", false));
         outButton.setToolTipText(NbBundle.getMessage(ZoomOutAction.class, "LBL_ZoomOut"));
@@ -80,7 +80,7 @@ public class SVGViewerToolbar {
         toolbarButtons.add(outButton);
 
         ZoomInAction zoomInAction = new ZoomInAction();
-        zoomInAction.setSvgViewerElement(svgViewerElement);
+        zoomInAction.setSVGViewerElement(svgViewerElement);
         JButton inButton = new JButton(zoomInAction);
         inButton.setToolTipText(NbBundle.getMessage(ZoomInAction.class, "LBL_ZoomIn"));
         inButton.setMnemonic(NbBundle.getMessage(SVGViewerToolbar.class, "ACS_In_BTN_Mnem").charAt(0));
@@ -95,40 +95,40 @@ public class SVGViewerToolbar {
         toolBar.addSeparator(new Dimension(11, 0));
 
         JButton button;
-        toolBar.add(button = getZoomButton(1, 1));
+        toolBar.add(button = createZoomButton(1, 1));
         toolbarButtons.add(button);
         toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(button = getZoomButton(1, 3));
+        toolBar.add(button = createZoomButton(1, 3));
         toolbarButtons.add(button);
-        toolBar.add(button = getZoomButton(1, 5));
+        toolBar.add(button = createZoomButton(1, 5));
         toolbarButtons.add(button);
-        toolBar.add(button = getZoomButton(1, 7));
+        toolBar.add(button = createZoomButton(1, 7));
         toolbarButtons.add(button);
         toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(button = getZoomButton(3, 1));
+        toolBar.add(button = createZoomButton(3, 1));
         toolbarButtons.add(button);
-        toolBar.add(button = getZoomButton(5, 1));
+        toolBar.add(button = createZoomButton(5, 1));
         toolbarButtons.add(button);
-        toolBar.add(button = getZoomButton(7, 1));
+        toolBar.add(button = createZoomButton(7, 1));
         toolbarButtons.add(button);
 
         toolBar.addSeparator(new Dimension(11, 0));
 
-        toolBar.add(button = getZoomButton());
+        toolBar.add(button = createZoomButton());
         toolbarButtons.add(button);
 
         toolBar.addSeparator(new Dimension(11, 0));
 
         // Backgrounds
-        toolBar.add(button = getCustomBackgroundButton(BackgroundMode.BLACK, Color.BLACK));
+        toolBar.add(button = createCustomBackgroundButton(BackgroundMode.BLACK, Color.BLACK));
         toolbarButtons.add(button);
-        toolBar.add(button = getCustomBackgroundButton(BackgroundMode.WHITE, Color.WHITE));
+        toolBar.add(button = createCustomBackgroundButton(BackgroundMode.WHITE, Color.WHITE));
         toolbarButtons.add(button);
-        toolBar.add(button = getCustomBackgroundButton(BackgroundMode.TRANSPARENT, Color.LIGHT_GRAY));
+        toolBar.add(button = createCustomBackgroundButton(BackgroundMode.TRANSPARENT, Color.LIGHT_GRAY));
         toolbarButtons.add(button);
-        toolBar.add(button = getCustomBackgroundButton(BackgroundMode.DARK_TRANSPARENT, Color.DARK_GRAY));
+        toolBar.add(button = createCustomBackgroundButton(BackgroundMode.DARK_TRANSPARENT, Color.DARK_GRAY));
         toolbarButtons.add(button);
-        toolBar.add(button = getCustomBackgroundButton(BackgroundMode.DEFAULT, Color.WHITE));
+        toolBar.add(button = createCustomBackgroundButton(BackgroundMode.DEFAULT, Color.WHITE));
         toolbarButtons.add(button);
 
         // Image Dimension
@@ -162,9 +162,9 @@ public class SVGViewerToolbar {
     }
 
     /**
-     * Gets zoom button.
+     * Creates zoom button.
      */
-    private JButton getZoomButton(final int xf, final int yf) {
+    private JButton createZoomButton(final int xf, final int yf) {
         // PENDING buttons should have their own icons.
         JButton button = new JButton("" + xf + ":" + yf); // NOI18N
         if (xf < yf) {
@@ -180,7 +180,7 @@ public class SVGViewerToolbar {
         return button;
     }
 
-    private JButton getZoomButton() {
+    private JButton createZoomButton() {
         // PENDING buttons should have their own icons.
         JButton button = new JButton(customZoomAction);
         button.setToolTipText(NbBundle.getMessage(CustomZoomAction.class, "LBL_CustomZoom"));
@@ -190,9 +190,9 @@ public class SVGViewerToolbar {
     }
 
     /**
-     * Gets custom background button.
+     * Creates custom background button.
      */
-    private JButton getCustomBackgroundButton(BackgroundMode bgMode, Color color) {
+    private JButton createCustomBackgroundButton(BackgroundMode bgMode, Color color) {
         final JButton button = new JButton(); // NOI18N
         button.setIcon(new BackgroundIcon(bgMode, color));
         button.setToolTipText(NbBundle.getMessage(SVGViewerToolbar.class, "LBL_ChangeBackground", bgMode.name()));

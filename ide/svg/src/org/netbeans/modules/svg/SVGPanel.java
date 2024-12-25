@@ -33,7 +33,7 @@ public class SVGPanel extends JPanel {
     private double scale = 1.0D;
     private BackgroundMode bgMode = BackgroundMode.DEFAULT;
 
-    public void setSvgDocument(SVGDocument doc) {
+    public void setSVGDocument(SVGDocument doc) {
         this.svgDocument = doc;
 
         repaint();
@@ -58,25 +58,21 @@ public class SVGPanel extends JPanel {
         Rectangle visibleRect = getVisibleRectangle();
 
         switch (bgMode) {
-            case BLACK:
+            case BLACK -> {
                 g.setColor(Color.BLACK);
                 g.fillRect(visibleRect.x, visibleRect.y, visibleRect.width, visibleRect.height);
-                break;
-
-            case WHITE:
+            }
+            case WHITE -> {
                 g.setColor(Color.WHITE);
                 g.fillRect(visibleRect.x, visibleRect.y, visibleRect.width, visibleRect.height);
-                break;
+            }
 
-            case TRANSPARENT:
-            case DARK_TRANSPARENT:
+            case TRANSPARENT, DARK_TRANSPARENT ->
                 Utils.drawChestTilePattern(g, visibleRect, 20, bgMode == BackgroundMode.DARK_TRANSPARENT);
-                break;
-
-            default:
+            case DEFAULT -> {
                 g.setColor(getBackground());
                 g.fillRect(visibleRect.x, visibleRect.y, visibleRect.width, visibleRect.height);
-                break;
+            }
         }
 
         if (svgDocument == null) {
