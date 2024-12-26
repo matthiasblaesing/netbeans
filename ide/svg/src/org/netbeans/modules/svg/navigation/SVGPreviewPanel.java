@@ -34,7 +34,7 @@ import org.openide.util.NbBundle;
  *
  * @author christian lenz
  */
-public class SvgPreviewPanel extends JPanel {
+public class SVGPreviewPanel extends JPanel {
 
     private SVGDocument svgDocument;
     private final int stringGapSize = 10;
@@ -86,7 +86,7 @@ public class SvgPreviewPanel extends JPanel {
         } else {
             g.setColor(Color.RED);
             FontMetrics fm = this.getFontMetrics(g.getFont());
-            String errMessage = NbBundle.getMessage(SvgPreviewPanel.class, "ERR_Thumbnail");
+            String errMessage = NbBundle.getMessage(SVGPreviewPanel.class, "ERR_Thumbnail");
             int stringWidth = fm.stringWidth(errMessage);
             g.drawString(errMessage, (this.getWidth() - stringWidth) / 2, this.getHeight() / 2);
         }

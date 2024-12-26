@@ -44,14 +44,14 @@ import org.openide.util.*;
 @NavigatorPanel.Registrations({
     @NavigatorPanel.Registration(mimeType = "image/svg+xml", displayName = "#Navigator_DisplayName")
 })
-public class SvgNavigatorPanel implements NavigatorPanel {
+public class SVGNavigatorPanel implements NavigatorPanel {
 
     private static final Logger LOG = Logger.getLogger(SVGViewerElement.class.getName());
 
     /**
      * holds UI of this panel
      */
-    private SvgPreviewPanel panelUI;
+    private SVGPreviewPanel panelUI;
     /**
      * template for finding data in given context. Object used as example,
      * replace with your own data source, for example JavaDataObject etc
@@ -71,16 +71,16 @@ public class SvgNavigatorPanel implements NavigatorPanel {
     private FileChangeListener fileChangeListener;
     private long lastSaveTime = -1;
     private DataObject currentDataObject;
-    private static final RequestProcessor WORKER = new RequestProcessor(SvgNavigatorPanel.class.getName());
+    private static final RequestProcessor WORKER = new RequestProcessor(SVGNavigatorPanel.class.getName());
 
     @Override
     public String getDisplayName() {
-        return NbBundle.getMessage(SvgNavigatorPanel.class, "Navigator_DisplayName");
+        return NbBundle.getMessage(SVGNavigatorPanel.class, "Navigator_DisplayName");
     }
 
     @Override
     public String getDisplayHint() {
-        return NbBundle.getMessage(SvgNavigatorPanel.class, "Navigator_DisplayHint");
+        return NbBundle.getMessage(SVGNavigatorPanel.class, "Navigator_DisplayHint");
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SvgNavigatorPanel implements NavigatorPanel {
             lastSaveTime = System.currentTimeMillis();
         }
         if (panelUI == null) {
-            panelUI = new SvgPreviewPanel();
+            panelUI = new SVGPreviewPanel();
         }
         return panelUI;
     }
@@ -200,7 +200,7 @@ public class SvgNavigatorPanel implements NavigatorPanel {
                         currentDataObject = DataObject.find(fe.getFile());
                         setNewContent(currentDataObject);
                     } catch (DataObjectNotFoundException ex) {
-                        Logger.getLogger(SvgNavigatorPanel.class.getName()).info(NbBundle.getMessage(SvgNavigatorPanel.class, "ERR_DataObject"));
+                        Logger.getLogger(SVGNavigatorPanel.class.getName()).info(NbBundle.getMessage(SVGNavigatorPanel.class, "ERR_DataObject"));
                     }
                 });
             }
