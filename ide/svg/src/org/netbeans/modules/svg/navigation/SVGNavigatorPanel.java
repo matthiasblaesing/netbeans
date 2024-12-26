@@ -108,7 +108,7 @@ public class SVGNavigatorPanel implements NavigatorPanel {
         }
 
         if (fileChangeListener == null) {
-            fileChangeListener = new SvgFileChangeAdapter();
+            fileChangeListener = new SVGFileChangeAdapter();
         }
         currentDataObject.getPrimaryFile().addFileChangeListener(fileChangeListener);
         setNewContent(currentDataObject);
@@ -150,7 +150,7 @@ public class SVGNavigatorPanel implements NavigatorPanel {
                 SVGLoader svgLoader = new SVGLoader();
                 SVGDocument svgDocument = svgLoader.load(fo.toURL());
 
-                SwingUtilities.invokeLater(() -> panelUI.setSvg(svgDocument));
+                SwingUtilities.invokeLater(() -> panelUI.setSVG(svgDocument));
             } catch (Exception ex) {
                 LOG.log(Level.SEVERE, ex.getMessage());
             }
@@ -187,7 +187,7 @@ public class SVGNavigatorPanel implements NavigatorPanel {
         }
     }
 
-    private class SvgFileChangeAdapter extends FileChangeAdapter {
+    private class SVGFileChangeAdapter extends FileChangeAdapter {
 
         @Override
         public void fileChanged(final FileEvent fe) {
