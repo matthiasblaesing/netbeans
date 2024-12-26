@@ -20,7 +20,6 @@ package org.netbeans.modules.svg.navigation;
 
 import com.github.weisj.jsvg.SVGDocument;
 import com.github.weisj.jsvg.parser.SVGLoader;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -143,7 +142,7 @@ public class SVGNavigatorPanel implements NavigatorPanel {
             }
 
             if (panelUI == null) {
-                return;
+                getComponent();
             }
 
             try {
