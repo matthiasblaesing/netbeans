@@ -40,12 +40,6 @@ public class ExtWebBrowser implements HtmlBrowser.Factory, java.io.Serializable,
     /** Browser executable property name */
     public static final String PROP_BROWSER_EXECUTABLE = "browserExecutable"; // NOI18N
 
-    /** DDE activate timeout property name */
-    public static final String PROP_DDE_ACTIVATE_TIMEOUT = "activateTimeout";   // NOI18N
-
-    /** DDE openURL timeout property name */
-    public static final String PROP_DDE_OPENURL_TIMEOUT = "openurlTimeout";     // NOI18N
-
     /** Fired when Browser Family ID has changed. Only System Default browser are
         expected to change Browser Family ID. */
     public static final String PROP_PRIVATE_BROWSER_FAMILY = "privateBrowserFamilyId";   // NOI18N
@@ -60,18 +54,6 @@ public class ExtWebBrowser implements HtmlBrowser.Factory, java.io.Serializable,
     public static final String MOZILLA  = "MOZILLA";    // NOI18N
     /** Name of DDE server corresponding to Firefox */
     public static final String FIREFOX  = "FIREFOX";    // NOI18N
-
-    /** Default for DDE activate timeout property */
-    protected static final int DEFAULT_ACTIVATE_TIMEOUT = 2000;
-
-    /** Default for DDE openURL timeout property */
-    protected static final int DEFAULT_OPENURL_TIMEOUT = 3000;
-
-    /** storage for DDE activate timeout property */
-    protected int activateTimeout = DEFAULT_ACTIVATE_TIMEOUT;
-
-    /** storage for DDE openURL timeout property */
-    protected int openurlTimeout = DEFAULT_OPENURL_TIMEOUT;
 
     /** Logger for extbrowser module. */
     private static final Logger err = Logger.getLogger("org.netbeans.modules.extbrowser");   // NOI18N
@@ -125,45 +107,6 @@ public class ExtWebBrowser implements HtmlBrowser.Factory, java.io.Serializable,
      */
     public void useBrowserExecutableDelegate(ExtWebBrowser otherBrowser) {
         this.browserExecutableDelegate = otherBrowser;
-    }
-
-    /** Getter for property openurlTimeout.
-     * @return Value of property openurlTimeout.
-     *
-     */
-    public int getOpenurlTimeout() {
-        return openurlTimeout;
-    }
-
-    /** Setter for property openurlTimeout.
-     * @param openurlTimeout New value of property openurlTimeout.
-     *
-     */
-    public void setOpenurlTimeout(int openurlTimeout) {
-        if (openurlTimeout != this.openurlTimeout) {
-            int oldVal = this.openurlTimeout;
-            this.openurlTimeout = openurlTimeout;
-            pcs.firePropertyChange(PROP_DDE_OPENURL_TIMEOUT, oldVal, openurlTimeout);
-        }
-    }
-
-    /** Getter for property activeTimeout.
-     * @return Value of property activeTimeout.
-     *
-     */
-    public int getActivateTimeout() {
-        return activateTimeout;
-    }
-
-    /** Setter for property activeTimeout.
-     * @param activateTimeout New value of property activeTimeout.
-     */
-    public void setActivateTimeout(int activateTimeout) {
-        if (activateTimeout != this.activateTimeout) {
-            int oldVal = this.activateTimeout;
-            this.activateTimeout = activateTimeout;
-            pcs.firePropertyChange(PROP_DDE_ACTIVATE_TIMEOUT, oldVal, activateTimeout);
-        }
     }
 
     // getter for browser name - should be overriden in subclasses
@@ -247,7 +190,7 @@ public class ExtWebBrowser implements HtmlBrowser.Factory, java.io.Serializable,
                 String [] args = Utilities.parseParameters(b);
 
                 if (args == null || args.length == 0) {
-                    throw new NbBrowserException ();
+                    throw new NbBrowserException("No arguments detected for browser executable");
                 }
                 b = args[0];
                 if (args[0].toUpperCase().contains("IEXPLORE.EXE")) {       // NOI18N
@@ -260,6 +203,7 @@ public class ExtWebBrowser implements HtmlBrowser.Factory, java.io.Serializable,
                 return new NbProcessDescriptor(b, params);
 
             } catch (NbBrowserException e) {
+                ExtWebBrowser.getEM().log(Level.FINE, "Failed to load default open command", e);   // NOI18N
                 try {
                     b = NbDdeBrowserImpl.getBrowserPath("IEXPLORE"); // NOI18N
                     if ((b != null) && (b.trim().length() > 0)) {
@@ -285,6 +229,7 @@ public class ExtWebBrowser implements HtmlBrowser.Factory, java.io.Serializable,
                         return new NbProcessDescriptor(b, params);
                     }
                 } catch (NbBrowserException e2) {
+                    ExtWebBrowser.getEM().log(Level.FINE, "Failed to determine open command", e2);   // NOI18N
                     b = "C:\\Program Files\\Internet Explorer\\iexplore.exe";     // NOI18N
                 }
             } catch (UnsatisfiedLinkError e) {

@@ -46,7 +46,7 @@ public class FirefoxBrowser extends ExtWebBrowser {
             try {
                 detectedPath = NbDdeBrowserImpl.getBrowserPath(ExtWebBrowser.FIREFOX);      // NOI18N
             } catch (NbBrowserException e) {
-                ExtWebBrowser.getEM().log(Level.FINEST, "Cannot detect Firefox : {0}", e);      // NOI18N
+                ExtWebBrowser.getEM().log(Level.FINEST, "Cannot detect Firefox", e);      // NOI18N
             }
             if ((detectedPath != null) && (detectedPath.trim().length() > 0)) {
                 return Boolean.FALSE;
@@ -106,9 +106,10 @@ public class FirefoxBrowser extends ExtWebBrowser {
             params += "{" + ExtWebBrowser.UnixBrowserFormat.TAG_URL + "}";
             try {
                 prg = NbDdeBrowserImpl.getBrowserPath(ExtWebBrowser.FIREFOX);
-                return new NbProcessDescriptor (prg, params);
+                return new NbProcessDescriptor(prg, params);
             } catch (NbBrowserException e) {
-                    prg = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";     // NOI18N
+                ExtWebBrowser.getEM().log(Level.FINE, "Failed to find path to firefox browser", e);   // NOI18N
+                prg = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";     // NOI18N
             } catch (UnsatisfiedLinkError e) {
                 prg = "firefox.exe";                                     // NOI18N
             }

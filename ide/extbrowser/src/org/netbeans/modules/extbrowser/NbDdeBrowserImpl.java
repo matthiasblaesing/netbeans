@@ -84,8 +84,7 @@ public class NbDdeBrowserImpl extends ExtBrowserImpl {
         try {
             return getKeyValueExpanded(WinReg.HKEY_LOCAL_MACHINE, key, null);
         } catch (Win32Exception ex) {
-            ExtWebBrowser.getEM().log(Level.FINE, "Failed to read registry entry for " + key, ex);
-            throw new NbBrowserException("Error when retrieving path to browser.");
+            throw new NbBrowserException("Error when retrieving path to browser, failed to read registry entry for " + key, ex);
         }
     }
 
@@ -101,8 +100,7 @@ public class NbDdeBrowserImpl extends ExtBrowserImpl {
         try {
             sBrowser = Advapi32Util.registryGetStringValue(WinReg.HKEY_CLASSES_ROOT, ".html", null);
         } catch (Win32Exception ex) {
-            ExtWebBrowser.getEM().log(Level.FINE, "Failed to read registry entry for .html", ex);
-            throw new NbBrowserException("Failed to read registry entry for .html");
+            throw new NbBrowserException("Failed to read registry entry for .html", ex);
         }
         if(sBrowser.isEmpty()) {
             throw new NbBrowserException("Browser not found.");
@@ -114,8 +112,7 @@ public class NbDdeBrowserImpl extends ExtBrowserImpl {
         try {
             path = getKeyValueExpanded(WinReg.HKEY_CLASSES_ROOT, sBrowser, null);
         } catch (Win32Exception ex) {
-            ExtWebBrowser.getEM().log(Level.FINE, "Failed to read registry entry for " + sBrowser, ex);
-            throw new NbBrowserException("Failed to read registry entry for " + sBrowser);
+            throw new NbBrowserException("Failed to read registry entry for " + sBrowser, ex);
         }
 
         if(path == null || path.isEmpty()) {
@@ -265,22 +262,6 @@ public class NbDdeBrowserImpl extends ExtBrowserImpl {
         }
         // guess IE
         return ExtWebBrowser.IEXPLORE;
-    }
-
-    /** Getter for property activateTimeout.
-     * @return Value of property activateTimeout.
-     *
-     */
-    public int getActivateTimeout() {
-        return extBrowserFactory.getActivateTimeout();
-    }
-
-    /** Getter for property openUrlTimeout.
-     * @return Value of property openUrlTimeout.
-     *
-     */
-    public int getOpenUrlTimeout() {
-        return extBrowserFactory.getOpenurlTimeout();
     }
 
 }

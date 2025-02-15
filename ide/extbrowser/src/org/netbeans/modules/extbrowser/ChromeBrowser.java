@@ -48,7 +48,7 @@ public class ChromeBrowser extends ExtWebBrowser implements PropertyChangeListen
                     detectedPath = NbDdeBrowserImpl.getBrowserPath("chrome");       // NOI18N
                 }
             } catch (NbBrowserException e) {
-                ExtWebBrowser.getEM().log(Level.FINEST, "Cannot detect chrome : " + e);   // NOI18N
+                ExtWebBrowser.getEM().log(Level.FINEST, "Cannot detect chrome", e);   // NOI18N
             }
             if ((detectedPath != null) && (detectedPath.trim().length() > 0)) {
                 return Boolean.FALSE;
@@ -126,9 +126,7 @@ public class ChromeBrowser extends ExtWebBrowser implements PropertyChangeListen
                         return new NbProcessDescriptor(b, params);
                     }
                 } catch (NbBrowserException e) {
-                    if (ExtWebBrowser.getEM().isLoggable(Level.FINE)) {
-                        ExtWebBrowser.getEM().log(Level.FINE, "Cannot get Path for Chrome: " + e);   // NOI18N
-                    }
+                    ExtWebBrowser.getEM().log(Level.FINE, "Cannot get Path for Chrome", e);   // NOI18N
                     File chrome = new File("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"); // NOI18N
                     if (!chrome.isFile()) {
                         chrome = new File("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"); // NOI18N
