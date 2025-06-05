@@ -466,11 +466,7 @@
                     </test-dependency>
                 </test-type>
             </test-dependencies>
-            <friend-packages>
-                <friend>org.netbeans.modules.javascript2.vue</friend>
-                <package>org.netbeans.modules.css.prep.editor.scss</package>
-                <package>org.netbeans.modules.css.prep.editor.less</package>
-            </friend-packages>
+            <public-packages/>
         </data>
     </configuration>
 </project>

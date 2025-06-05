@@ -22,16 +22,14 @@ import java.util.Collection;
 import java.util.EnumSet;
 import org.netbeans.api.html.lexer.HTMLTokenId;
 import org.netbeans.api.lexer.InputAttributes;
+import org.netbeans.api.lexer.Language;
 import org.netbeans.api.lexer.LanguagePath;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenId;
 import org.netbeans.modules.css.lib.api.CssTokenId;
-import org.netbeans.modules.css.prep.editor.less.LessLanguage;
-import org.netbeans.modules.css.prep.editor.scss.ScssLanguage;
 import org.netbeans.modules.javascript2.lexer.api.JsTokenId;
 import org.netbeans.spi.lexer.LanguageEmbedding;
 import org.netbeans.spi.lexer.LanguageHierarchy;
-import org.netbeans.modules.javascript2.jade.editor.lexer.JadeTokenId;
 
 /**
  *
@@ -63,6 +61,13 @@ public enum VueTokenId implements TokenId {
 
     public static abstract class VueLanguageHierarchy extends LanguageHierarchy<VueTokenId> {
 
+        @SuppressWarnings("PackageVisibleField") // Unittest
+        static Language<?> JADE_LANGUAGE = Language.find("text/jade");
+        @SuppressWarnings("PackageVisibleField") // Unittest
+        static Language<?> LESS_LANGUAGE = Language.find("text/less");
+        @SuppressWarnings("PackageVisibleField") // Unittest
+        static Language<?> SCSS_LANGUAGE = Language.find("text/scss");
+
         @Override
         protected Collection<VueTokenId> createTokenIds() {
             return EnumSet.allOf(VueTokenId.class);
@@ -77,11 +82,11 @@ public enum VueTokenId implements TokenId {
                     LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
                 case JAVASCRIPT, JAVASCRIPT_ATTR ->
                     LanguageEmbedding.create(JsTokenId.javascriptLanguage(), 0, 0, false);
-                case JAVASCRIPT_PUG -> LanguageEmbedding.create(JadeTokenId.jadeLanguage(), 0, 0, true);
+                case JAVASCRIPT_PUG -> LanguageEmbedding.create(JADE_LANGUAGE, 0, 0, true);
                 case HTML -> LanguageEmbedding.create(HTMLTokenId.language(), 0, 0, true);
                 case CSS -> LanguageEmbedding.create(CssTokenId.language(), 0, 0, true);
-                case STYLE_LESS -> LanguageEmbedding.create(LessLanguage.getLanguageInstance(), 0, 0, true);    
-                case STYLE_SCSS -> LanguageEmbedding.create(ScssLanguage.getLanguageInstance(), 0, 0, true);
+                case STYLE_LESS -> LanguageEmbedding.create(LESS_LANGUAGE, 0, 0, true);
+                case STYLE_SCSS -> LanguageEmbedding.create(SCSS_LANGUAGE, 0, 0, true);
                 default -> null;
             };
         }
