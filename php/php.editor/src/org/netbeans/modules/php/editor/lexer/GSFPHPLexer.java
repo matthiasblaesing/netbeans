@@ -23,12 +23,15 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.api.lexer.Token;
+import org.netbeans.modules.php.editor.embedding.CssEmbeddingProvider;
 import org.netbeans.modules.php.project.api.PhpLanguageProperties;
 import org.netbeans.spi.lexer.Lexer;
+import org.netbeans.spi.lexer.LexerInput;
 import org.netbeans.spi.lexer.LexerRestartInfo;
 import org.netbeans.spi.lexer.TokenFactory;
 import org.openide.filesystems.FileObject;
 
+import static org.netbeans.modules.php.editor.embedding.CssEmbeddingProvider.MIMETYPE;
 
 
 /**
@@ -36,10 +39,13 @@ import org.openide.filesystems.FileObject;
  * @author Petr Pisl, Marek Fukala
  */
 public final class GSFPHPLexer implements Lexer<PHPTokenId> {
+
+    private final LexerInput lexerInput;
     private final PHP5ColoringLexer scanner;
     private final TokenFactory<PHPTokenId> tokenFactory;
 
     private GSFPHPLexer(LexerRestartInfo<PHPTokenId> info, boolean shortTag, boolean aspTag, boolean inPHP) {
+        lexerInput = info.input();
         scanner = new PHP5ColoringLexer(info, shortTag, aspTag, inPHP);
         tokenFactory = info.tokenFactory();
     }
@@ -66,12 +72,18 @@ public final class GSFPHPLexer implements Lexer<PHPTokenId> {
             Token<PHPTokenId> token = null;
             if (tokenId != null) {
                 if (tokenId == PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING) {
-                   PHP5ColoringLexer.LexerState state = scanner.getState();
-                   if (state.heredoc != null && state.heredoc.equals("CSS")) {
-                       tokenId = PHPTokenId.T_EMBEDDED_CSS;
-                   }
+                    String hereDocInfo = scanner.getState().heredoc;
+                    token = tokenFactory.createPropertyToken(tokenId, lexerInput.readLength(), (Token<PHPTokenId> token1, Object key) -> {
+                        if (key.equals(MIMETYPE)) {
+                            if ("CSS".equals(hereDocInfo)) {
+                                return CssEmbeddingProvider.TARGET_MIME_TYPE;
+                            }
+                        }
+                        return null;
+                    });
+                } else {
+                   token = tokenFactory.createToken(tokenId);
                 }
-                token = tokenFactory.createToken(tokenId);
             }
             return token;
         } catch (IOException ex) {

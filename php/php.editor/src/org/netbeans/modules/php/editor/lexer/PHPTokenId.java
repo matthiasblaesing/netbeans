@@ -34,6 +34,8 @@ import org.netbeans.spi.lexer.LanguageHierarchy;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerRestartInfo;
 
+import static org.netbeans.modules.php.editor.embedding.CssEmbeddingProvider.MIMETYPE;
+
 /**
  *
  * @author Petr Pisl
@@ -41,7 +43,6 @@ import org.netbeans.spi.lexer.LexerRestartInfo;
 public enum PHPTokenId implements TokenId {
 
     T_INLINE_HTML(null, "php"), // NOI18N
-    T_EMBEDDED_CSS(null, "php"), // NOI18N
     PHP_OPENTAG(null, "phpopenclose"), //NOI18N
     T_OPEN_TAG_WITH_ECHO(null, "phpopenclose"),
     PHP_CLOSETAG(null, "phpopenclose"), //NOI18N
@@ -238,10 +239,10 @@ public enum PHPTokenId implements TokenId {
                 return LanguageEmbedding.create(HTMLTokenId.language(), 0, 0, true);
             } else if (id == PHPDOC_COMMENT) {
                 return LanguageEmbedding.create(PHPDocCommentTokenId.language(), 0, 0);
-            } else if (id == T_EMBEDDED_CSS) {
-                Language<?> jsLanguage = Language.find("text/css");
-                if (jsLanguage != null) {
-                    return LanguageEmbedding.create(jsLanguage, 0, 0, true);
+            } else if (id == PHP_CONSTANT_ENCAPSED_STRING && token.hasProperties() && token.getProperty(MIMETYPE) != null) {
+                Language<?> language = Language.find((String) token.getProperty(MIMETYPE));
+                if (language != null) {
+                    return LanguageEmbedding.create(language, 0, 0, true);
                 }
             }
 

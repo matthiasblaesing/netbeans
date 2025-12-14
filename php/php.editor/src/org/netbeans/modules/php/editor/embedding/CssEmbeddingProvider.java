@@ -28,9 +28,10 @@ import org.netbeans.api.lexer.TokenSequence;
 import org.netbeans.modules.parsing.api.Embedding;
 import org.netbeans.modules.parsing.api.Snapshot;
 import org.netbeans.modules.parsing.spi.EmbeddingProvider;
+
 import static org.netbeans.modules.php.api.util.FileUtils.PHP_MIME_TYPE;
 import static org.netbeans.modules.php.editor.embedding.CssEmbeddingProvider.TARGET_MIME_TYPE;
-import static org.netbeans.modules.php.editor.lexer.PHPTokenId.T_EMBEDDED_CSS;
+import static org.netbeans.modules.php.editor.lexer.PHPTokenId.PHP_CONSTANT_ENCAPSED_STRING;
 
 /**
  * This class is a copy of the {@link org.netbeans.modules.javascript2.vue.editor.embedding.VueCssEmbeddingProvider}
@@ -40,7 +41,7 @@ import static org.netbeans.modules.php.editor.lexer.PHPTokenId.T_EMBEDDED_CSS;
         mimeType = PHP_MIME_TYPE,
         targetMimeType = TARGET_MIME_TYPE)
 public class CssEmbeddingProvider extends EmbeddingProvider {
-
+    public static final String MIMETYPE = "internal-mime-type";
     public static final String TARGET_MIME_TYPE = "text/css"; //NOI18N
 
     private volatile boolean cancelled = true;
@@ -66,7 +67,10 @@ public class CssEmbeddingProvider extends EmbeddingProvider {
             }
             Token<?> token = ts.token();
             TokenId id = token.id();
-            if (id.equals(T_EMBEDDED_CSS)) {
+            if (id == PHP_CONSTANT_ENCAPSED_STRING
+                    && token.hasProperties()
+                    && token.getProperty(MIMETYPE) != null
+                    && TARGET_MIME_TYPE.equals(token.getProperty(MIMETYPE))) {
                 embeddings.add(snapshot.create(ts.offset(), token.length(), TARGET_MIME_TYPE));
             }
         }
