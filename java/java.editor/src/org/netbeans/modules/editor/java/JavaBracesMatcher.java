@@ -18,9 +18,11 @@
  */
 package org.netbeans.modules.editor.java;
 
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.util.SourcePositions;
 import static com.sun.source.tree.Tree.Kind.CLASS;
 import com.sun.source.util.TreePath;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import org.netbeans.api.java.lexer.JavaTokenId;
 import org.netbeans.api.java.source.CompilationController;
 import org.netbeans.api.java.source.JavaSource;
 import org.netbeans.api.java.source.Task;
+import org.netbeans.api.java.source.support.ErrorAwareTreePathScanner;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.api.lexer.PartType;
 import org.netbeans.api.lexer.Token;
@@ -355,31 +358,79 @@ public final class JavaBracesMatcher implements BracesMatcher, BracesMatcherFact
         }
         final AtomicBoolean valid = new AtomicBoolean();
         try {
-            javaSource.runUserActionTask(new Task<CompilationController>() {
-                @Override
-                public void run(CompilationController ctrl) throws Exception {
-                    ctrl.toPhase(JavaSource.Phase.PARSED);
-                    TreePath path = ctrl.getTreeUtilities().pathFor(srcOffset);
-                    if (path == null) {
+            // org.netbeans.api.java.source.TreeUtilities.pathFor(int)
+            // is not used here as its special casing logic makes it hard to
+            // reason about what tree will be returned
+            javaSource.runUserActionTask((CompilationController ctrl) -> {
+                ctrl.toPhase(JavaSource.Phase.PARSED);
+
+                class PathFinder extends ErrorAwareTreePathScanner<TreePath, Void> {
+
+                    private final int pos;
+                    private final SourcePositions sourcePositions;
+
+                    private PathFinder(int pos, SourcePositions sourcePositions) {
+                        this.pos = pos;
+                        this.sourcePositions = sourcePositions;
+                    }
+
+                    @Override
+                    public TreePath scan(Tree tree, Void p) {
+                        TreePath result = null;
+                        if (tree != null) {
+                            CompilationUnitTree cut = getCurrentPath().getCompilationUnit();
+                            long startPos = sourcePositions.getStartPosition(cut, tree);
+                            long endPos = sourcePositions.getEndPosition(cut, tree);
+                            if (startPos <= pos && endPos > pos) {
+                                result = super.scan(tree, p);
+                                if(result == null) {
+                                    // getCurrentPath is the TreePath for the parent
+                                    // node. getCurrentPath is updated in the super classes
+                                    // scan and reset on exit, so at this point we see the
+                                    // outer path
+                                    result = new TreePath(getCurrentPath(), tree);
+                                }
+                            }
+                        }
+                        return result;
+                    }
+
+                    @Override
+                    public TreePath reduce(TreePath r1, TreePath r2) {
+                        // We only yield a non-null result if it is down the
+                        // correct path
+                        if (r1 != null) {
+                            return r1;
+                        } else {
+                            return r2;
+                        }
+                    }
+                }
+
+                TreePath path =
+                        new PathFinder(srcOffset, ctrl.getTrees().getSourcePositions())
+                                .scan(new TreePath(ctrl.getCompilationUnit()), null);
+
+                if(path == null) {
+                    return;
+                }
+
+                switch (path.getLeaf().getKind()) {
+                    case GREATER_THAN:
+                    case GREATER_THAN_EQUAL:
+                    case LESS_THAN:
+                    case LESS_THAN_EQUAL:
+                    case LEFT_SHIFT:
+                    case LEFT_SHIFT_ASSIGNMENT:
+                    case RIGHT_SHIFT:
+                    case RIGHT_SHIFT_ASSIGNMENT:
+                    case UNSIGNED_RIGHT_SHIFT:
+                    case UNSIGNED_RIGHT_SHIFT_ASSIGNMENT:
+                        // ignore logical and aritmetic operations
                         return;
-                    }
-                    switch (path.getLeaf().getKind()) {
-                        case GREATER_THAN:
-                        case GREATER_THAN_EQUAL:
-                        case LESS_THAN:
-                        case LESS_THAN_EQUAL:
-                        case LEFT_SHIFT:
-                        case LEFT_SHIFT_ASSIGNMENT:
-                        case RIGHT_SHIFT:
-                        case RIGHT_SHIFT_ASSIGNMENT:
-                        case UNSIGNED_RIGHT_SHIFT:
-                        case UNSIGNED_RIGHT_SHIFT_ASSIGNMENT:
-                            // ignore logical and aritmetic operations
-                            return;
-                        default:
-                            valid.set(true);
-                            break;
-                    }
+                    default:
+                        valid.set(true);
+                        break;
                 }
             }, true);
         } catch (IOException ex) {

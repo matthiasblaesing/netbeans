@@ -85,10 +85,61 @@ public class JavaBracesMatcherTest extends NbTestCase {
         perfomAngleBracketsTest("Map x = new HashMap<String, Map^<Integer,Map<Integer,Map<Integer,List<String>>>^>>()");
         perfomAngleBracketsTest("Map x = new HashMap<String, Map<Integer,Map^<Integer,Map<Integer,List<String>>^>>>()");
         perfomAngleBracketsTest("Map x = new HashMap<String, Map<Integer,Map<Integer,Map^<Integer,List<String>^>>>>()");
+        perfomAngleBracketsTest("Map<String, Map<Integer,Map<Integer,Map<Integer,List<String>>>>> x = new HashMap^<^>()");
+        perfomAngleBracketsTest("Map x = new HashMap<String, List^<String^>");
         perfomAngleBracketsTest("""
             Map<Integer,List<String>> x = new HashMap<Integer,List<String>>()
             Object a = x.^<HashMap<Integer,List<String>>^>get(0)
         """);
+        perfomAngleBracketsTest("class Test implements List^<String^> {}");
+        perfomAngleBracketsTest("class Test implements Map^<String,List<String>^> {}");
+        perfomAngleBracketsTest("class Test implements Map<String,List^<String^>> {}");
+        perfomAngleBracketsTest("public <T> class Test implements Map<String,List^<T^>> {}");
+        perfomAngleBracketsTest("public <T> class Test implements Map^<String,List<T>^> {}");
+        perfomAngleBracketsTest("public ^<T^> class Test implements Map<String,List<T>> {}");
+        // Check that non-generics are not reported as potential braces
+        assertHasNoOrigin("int n1 = 10 ^>> 1;");
+        assertHasNoOrigin("int n1 = 10 >^> 1;");
+        assertHasNoOrigin("int n1 = 10 >>^ 1;");
+        assertHasNoOrigin("int n1 = 10^>> 1;");
+        assertHasNoOrigin("int n1 = 10>^> 1;");
+        assertHasNoOrigin("int n1 = 10>>^ 1;");
+        assertHasNoOrigin("if(b1 ^< 10) {}");
+        assertHasNoOrigin("if(b1 ^> 10) {}");
+    }
+
+    /**
+     * Pass a method body as {@code angleStr}, where the caret position is
+     * marked by {@code ^}. The method checks, that the
+     * JavaBracesMatcher#findOrigin returns null.
+     *
+     * @param angleStr
+     * @throws Exception
+     */
+    private void assertHasNoOrigin(String angleStr) throws Exception {
+        testNumber++;
+        String srcTmp = makeTestClass(angleStr);
+        int caretPos = srcTmp.indexOf('^');
+        String sourceCode = srcTmp.substring(0, caretPos) + srcTmp.substring(caretPos + 1);
+        FileObject wd = FileUtil.toFileObject(getWorkDir());
+        FileObject sourceDir = FileUtil.createFolder(wd, "src");
+        FileObject buildDir = FileUtil.createFolder(wd, "build");
+        FileObject cacheFolder = FileUtil.createFolder(wd, "cache");
+        Paths.get(cacheFolder.toURI()).toFile().mkdirs();
+        FileObject testFO = FileUtil.createData(sourceDir, "test/Test" + testNumber + ".java");
+        TestUtilities.copyStringToFile(testFO, sourceCode);
+        SourceUtilsTestUtil.prepareTest(sourceDir, buildDir, cacheFolder);
+        JavaSource source = JavaSource.forFileObject(testFO);
+        assertNotNull(source);
+        DataObject od = DataObject.find(testFO);
+        EditorCookie ec = od.getCookie(EditorCookie.class);
+        Document doc = ec.openDocument();
+        doc.putProperty(Language.class, JavaTokenId.language());
+        doc.putProperty("mimeType", JavaKit.JAVA_MIME_TYPE);
+        BracesMatcherFactory factory = new JavaBracesMatcher();
+        MatcherContext context = BracesMatchingTestUtils.createMatcherContext(doc, caretPos, false, 1);
+        BracesMatcher matcher = factory.createMatcher(context);
+        assertNull(matcher.findOrigin());
     }
 
     private String makeTestClass(String angleStr) {
