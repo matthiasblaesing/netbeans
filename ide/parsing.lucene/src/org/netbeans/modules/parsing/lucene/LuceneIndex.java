@@ -70,7 +70,6 @@ import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.modules.parsing.lucene.support.Convertor;
 import org.netbeans.modules.parsing.lucene.support.Index;
 import org.netbeans.modules.parsing.lucene.support.IndexReaderInjection;
-import org.netbeans.modules.parsing.lucene.support.StoppableConvertor;
 import org.openide.util.BaseUtilities;
 import org.openide.util.Exceptions;
 import org.openide.util.Pair;
@@ -189,7 +188,7 @@ public class LuceneIndex implements Index.Transactional, Index.WithTermFrequenci
             final @NonNull Collection<? super T> result,
             final @NonNull String field,
             final @NullAllowed String seekTo,
-            final @NonNull StoppableConvertor<BytesRef,T> filter,
+            final @NonNull Convertor<BytesRef,T> filter,
             final @NullAllowed AtomicBoolean cancel) throws IOException, InterruptedException {
         queryTermsImpl(result, field, seekTo, Convertors.newTermEnumToTermConvertor(filter), cancel);
     }
@@ -199,7 +198,7 @@ public class LuceneIndex implements Index.Transactional, Index.WithTermFrequenci
             final @NonNull Collection<? super T> result,
             final @NonNull String field,
             final @NullAllowed String seekTo,
-            final @NonNull StoppableConvertor<Index.WithTermFrequencies.TermFreq,T> filter,
+            final @NonNull Convertor<Index.WithTermFrequencies.TermFreq,T> filter,
             final @NullAllowed AtomicBoolean cancel) throws IOException, InterruptedException {
         queryTermsImpl(result, field, seekTo, Convertors.newTermEnumToFreqConvertor(filter), cancel);
     }
@@ -209,7 +208,7 @@ public class LuceneIndex implements Index.Transactional, Index.WithTermFrequenci
             final @NonNull Collection<? super T> result,
             final @NonNull String field,
             @NullAllowed String startValue,
-            final @NonNull StoppableConvertor<TermsEnum,T> adapter,
+            final @NonNull Convertor<TermsEnum,T> adapter,
             final @NullAllowed AtomicBoolean cancel) throws IOException, InterruptedException {
 
         BytesRef startBytesRef;
@@ -244,8 +243,6 @@ public class LuceneIndex implements Index.Transactional, Index.WithTermFrequenci
                         } while (te.next() != null);
                     }
                 }
-            } catch (StoppableConvertor.Stop stop) {
-                //Stop iteration of TermEnum
             } finally {
                 changeIndexReader(adapter, null);
             }

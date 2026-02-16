@@ -76,7 +76,6 @@ import org.netbeans.modules.parsing.lucene.IndexFactory;
 import org.netbeans.modules.parsing.lucene.support.Convertor;
 import org.netbeans.modules.parsing.lucene.support.Index;
 import org.netbeans.modules.parsing.lucene.support.IndexManagerTestUtilities;
-import org.netbeans.modules.parsing.lucene.support.StoppableConvertor;
 import org.netbeans.modules.parsing.spi.TaskIndexingMode;
 import org.netbeans.spi.java.classpath.ClassPathProvider;
 import org.netbeans.spi.java.classpath.support.ClassPathSupport;
@@ -2389,7 +2388,7 @@ public class JavaSourceTest extends NbTestCase {
         public <T> void queryTerms(
                 Collection<? super T> result,
                 String field, String start,
-                StoppableConvertor<BytesRef, T> filter,
+                Convertor<BytesRef, T> filter,
                 AtomicBoolean cancel) throws IOException, InterruptedException {
             await (cancel);
         }

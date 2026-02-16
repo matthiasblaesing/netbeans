@@ -120,14 +120,13 @@ public interface Index {
      * @param result the {@link Collection} to store results into
      * @param field the field to analyze
      * @param start the first term to start the b-tree iteration with, if null the iteration start on the first term.
-     * @param filter converting the terms into the user objects which are added into the result or null to skeep them.
-     * The filter can stop the iteration by throwing the {@link StoppableConvertor.Stop}.
+     * @param filter converting the terms into the user objects which are added into the result or null to skip them.
      * @param cancel the {@link AtomicBoolean} used to cancel the index iteration by the caller. When set to true the iteration
      * is stopped.
      * @throws IOException in case of IO problem
      * @throws InterruptedException when query was canceled
      */
-    <T> void queryTerms(@NonNull Collection<? super T> result, @NonNull String field, @NullAllowed String start, @NonNull StoppableConvertor<BytesRef,T> filter, @NullAllowed AtomicBoolean cancel) throws  IOException, InterruptedException;
+    <T> void queryTerms(@NonNull Collection<? super T> result, @NonNull String field, @NullAllowed String start, @NonNull Convertor<BytesRef,T> filter, @NullAllowed AtomicBoolean cancel) throws  IOException, InterruptedException;
     
     /**
      * Updates the {@link Index} by adding the toAdd objects and deleting toDelete objects.
@@ -242,8 +241,7 @@ public interface Index {
          * @param result the {@link Collection} to store results into
          * @param field the field to analyze
          * @param start the first term to start the b-tree iteration with, if null the iteration start on the first term.
-         * @param filter converting the terms into the user objects which are added into the result or null to skeep them.
-         * The filter can stop the iteration by throwing the {@link StoppableConvertor.Stop}.
+         * @param filter converting the terms into the user objects which are added into the result or null to skip them.
          * @param cancel the {@link AtomicBoolean} used to cancel the index iteration by the caller. When set to true the iteration
          * is stopped.
          * @throws IOException in case of IO problem
@@ -253,7 +251,7 @@ public interface Index {
                 @NonNull Collection<? super T> result,
                 @NonNull String field,
                 @NullAllowed String start,
-                @NonNull StoppableConvertor<TermFreq,T> filter,
+                @NonNull Convertor<TermFreq,T> filter,
                 @NullAllowed AtomicBoolean cancel) throws  IOException, InterruptedException;
     }
 }

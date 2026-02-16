@@ -49,7 +49,6 @@ import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.modules.parsing.lucene.support.Convertor;
 import org.netbeans.modules.parsing.lucene.support.Index;
-import org.netbeans.modules.parsing.lucene.support.StoppableConvertor;
 import org.openide.util.Parameters;
 
 
@@ -216,7 +215,7 @@ public class MemoryIndex implements Index {
             @NonNull Collection<? super T> result,
             @NonNull String field,
             @NullAllowed String startValue,
-            @NonNull StoppableConvertor<BytesRef, T> filter,
+            @NonNull Convertor<BytesRef, T> filter,
             @NullAllowed AtomicBoolean cancel) throws IOException, InterruptedException {
         Parameters.notNull("result", result);   //NOI18N
         Parameters.notNull("filter", filter); //NOI18N
@@ -249,8 +248,6 @@ public class MemoryIndex implements Index {
                     } while (te.next() != null);
                 }
             }
-        } catch (StoppableConvertor.Stop stop) {
-            //Stop iteration of TermEnum
         } finally {
             lock.readLock().unlock();
         }

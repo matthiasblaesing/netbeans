@@ -47,8 +47,6 @@ import org.netbeans.modules.parsing.lucene.support.Convertor;
 import org.netbeans.modules.parsing.lucene.support.Index;
 import org.netbeans.modules.parsing.lucene.support.IndexManager;
 import org.netbeans.modules.parsing.lucene.support.Queries;
-import org.netbeans.modules.parsing.lucene.support.StoppableConvertor;
-import org.netbeans.modules.parsing.lucene.support.StoppableConvertor.Stop;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.URLMapper;
@@ -357,7 +355,7 @@ public final class PersistentClassIndex extends ClassIndexImpl {
                 } else {
                     collectInto = result;
                 }
-                final Pair<StoppableConvertor<BytesRef,String>,String> filter = QueryUtil.createPackageFilter(prefix,directOnly);
+                final Pair<Convertor<BytesRef,String>,String> filter = QueryUtil.createPackageFilter(prefix,directOnly);
                 index.queryTerms(collectInto, DocumentUtil.FIELD_PACKAGE_NAME, filter.second(), filter.first(), cancel.get());
                 if (cacheOp) {
                     synchronized (PersistentClassIndex.this) {
@@ -385,7 +383,7 @@ public final class PersistentClassIndex extends ClassIndexImpl {
         }
         try {
             IndexManager.priorityAccess(() -> {
-                final StoppableConvertor<Index.WithTermFrequencies.TermFreq,Void> convertor = new FreqCollector(
+                final Convertor<Index.WithTermFrequencies.TermFreq,Void> convertor = new FreqCollector(
                         FIELD_REFERENCES, typeFreq, pkgFreq);
                 ((Index.WithTermFrequencies)index).queryTermFrequencies(
                         Collections.<Void>emptyList(),
@@ -702,7 +700,7 @@ public final class PersistentClassIndex extends ClassIndexImpl {
     }
 
 
-    private static final class FreqCollector implements StoppableConvertor<Index.WithTermFrequencies.TermFreq, Void> {
+    private static final class FreqCollector implements Convertor<Index.WithTermFrequencies.TermFreq, Void> {
 
         private final int postfixLen = ClassIndexImpl.UsageType.values().length;
         private final String fieldName;
@@ -722,7 +720,7 @@ public final class PersistentClassIndex extends ClassIndexImpl {
         @CheckForNull
         @Override
         @SuppressWarnings("StringEquality")
-        public Void convert(@NonNull final Index.WithTermFrequencies.TermFreq param) throws Stop {
+        public Void convert(@NonNull final Index.WithTermFrequencies.TermFreq param) {
             final BytesRef term = param.getTerm();
             final int docCount = param.getFreq();
             final String encBinName = term.utf8ToString();

@@ -36,12 +36,11 @@ import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.java.source.ClassIndex.SearchScopeType;
 import org.netbeans.modules.java.source.usages.ClassIndexImpl.UsageType;
+import org.netbeans.modules.parsing.lucene.support.Convertor;
 import org.netbeans.modules.parsing.lucene.support.Queries;
-import org.netbeans.modules.parsing.lucene.support.StoppableConvertor;
 import org.openide.util.Pair;
 import org.openide.util.Parameters;
 
-import static java.util.Arrays.stream;
 
 /**
  *
@@ -144,19 +143,17 @@ class QueryUtil {
 
     }
 
-    static Pair<StoppableConvertor<BytesRef,String>,String> createPackageFilter(
+    static Pair<Convertor<BytesRef,String>,String> createPackageFilter(
             final @NullAllowed String prefix,
             final boolean directOnly) {
-        final StoppableConvertor<BytesRef, String> filter = new PackageFilter(prefix, directOnly);
+        final Convertor<BytesRef, String> filter = new PackageFilter(prefix, directOnly);
         return Pair.of(filter, prefix);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Private implementation">
                             
                                     
-    private static final class PackageFilter implements StoppableConvertor<BytesRef, String> {
-        
-        private static final Stop STOP = new Stop();
+    private static final class PackageFilter implements Convertor<BytesRef, String> {
         
         private final boolean directOnly;
         private final boolean all;
@@ -169,7 +166,7 @@ class QueryUtil {
         }
         
         @Override
-        public String convert(BytesRef currentTerm) throws Stop {
+        public String convert(BytesRef currentTerm) {
             String currentText = currentTerm.utf8ToString();
             if (all || currentText.startsWith(value)) {
                 if (directOnly) {
