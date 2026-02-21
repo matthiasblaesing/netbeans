@@ -899,4 +899,46 @@ public class TreeUtilitiesTest extends NbTestCase {
         StatementTree tree = info.getTreeUtilities().parseStatement("{ return super.test(p); }", new SourcePositions[1]);
         info.getTreeUtilities().attributeTree(tree, scope);
     }
+
+    public void testIsVarType1() throws Exception {
+        this.sourceLevel = "21";
+        prepareTest("Test", "package test; public class Test {public Test(){var var = 7;}}");
+        TreePath tp = info.getTreeUtilities().pathFor(47);
+        assertTrue(info.getTreeUtilities().isVarType(tp));
+    }
+
+    public void testIsVarType2() throws Exception {
+        this.sourceLevel = "21";
+        prepareTest("Test", "package test; public class Test {public Test(){String var = 7;}}");
+        TreePath tp = info.getTreeUtilities().pathFor(47);
+        assertFalse(info.getTreeUtilities().isVarType(tp));
+    }
+
+    public void testIsVarType3() throws Exception {
+        this.sourceLevel = "21";
+        prepareTest("Test", "package test; public class Test {public Test(){@Dummy var var = 7;}}");
+        TreePath tp = info.getTreeUtilities().pathFor(47);
+        assertTrue(info.getTreeUtilities().isVarType(tp));
+    }
+
+    public void testIsVarType4() throws Exception {
+        this.sourceLevel = "21";
+        prepareTest("Test", "package test; public class Test {public Test(){var /* Comment */ var = 7;}}");
+        TreePath tp = info.getTreeUtilities().pathFor(47);
+        assertTrue(info.getTreeUtilities().isVarType(tp));
+    }
+
+    public void testIsVarType5() throws Exception {
+        this.sourceLevel = "21";
+        prepareTest("Test", "package test; public class Test {public Test(){var _ = 7;}}");
+        TreePath tp = info.getTreeUtilities().pathFor(47);
+        assertTrue(info.getTreeUtilities().isVarType(tp));
+    }
+
+    public void testIsVarType6() throws Exception {
+        this.sourceLevel = "21";
+        prepareTest("Test", "package test; public class Test {public Test(){for (var _: orderIDs) { total++; } }}");
+        TreePath tp = info.getTreeUtilities().pathFor(52);
+        assertTrue(info.getTreeUtilities().isVarType(tp));
+    }
 }

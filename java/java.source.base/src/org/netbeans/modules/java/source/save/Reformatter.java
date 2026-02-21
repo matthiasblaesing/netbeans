@@ -1231,11 +1231,11 @@ public class Reformatter implements ReformatTask {
                 } else {
                     if (!insideForTryOrCatch)
                         continuationIndent = true;
-                    if (node.getType() == null || tokens.token().id() == JavaTokenId.VAR || scan(node.getType(), p)) {
-                        if (node.getType() != null && tokens.token().id() != JavaTokenId.VAR) {
+                    if (node.getType() == null || isVarIdentifier(tokens) || scan(node.getType(), p)) {
+                        if (node.getType() != null && !isVarIdentifier(tokens)) {
                             spaces(1, fieldGroup);
                         } else {
-                            if (tokens.token().id() == JavaTokenId.VAR) {
+                            if (isVarIdentifier(tokens)) {
                                 //Add space after 'var' token
                                 addDiff(new Diff(tokens.offset() + 3, tokens.offset() + 3, " "));
                                 tokens.moveNext();
@@ -1273,6 +1273,35 @@ public class Reformatter implements ReformatTask {
                 continuationIndent = old;
             }
             return true;
+        }
+
+        // Idea here: an identifier with content "var" is considered the
+        // var-type if it is followed by another identifier ignoring comments
+        // and whitespace
+        private static final Set<JavaTokenId> VAR_IGNORE_TO_IDENTIFIER = Set.of(
+                JavaTokenId.BLOCK_COMMENT, JavaTokenId.JAVADOC_COMMENT,
+                JavaTokenId.LINE_COMMENT, JavaTokenId.WHITESPACE
+        );
+        private static boolean isVarIdentifier(TokenSequence<JavaTokenId> t) {
+            if (t.token().id() == JavaTokenId.IDENTIFIER && t.token().text().toString().equals("var")) {
+                int pos = t.index();
+                try {
+                    while (t.moveNext()) {
+                        if (t.token().id() == JavaTokenId.IDENTIFIER || t.token().id() == JavaTokenId.UNDERSCORE) {
+                            return true;
+                        } else if (!VAR_IGNORE_TO_IDENTIFIER.contains(t.token().id())) {
+                            return false;
+                        }
+                    }
+                    return false;
+                } finally {
+                    // Reset after check
+                    t.moveIndex(pos);
+                    t.moveNext();
+                }
+            } else {
+                return false;
+            }
         }
 
         private Boolean scanRecord(ClassTree node, Void p) {

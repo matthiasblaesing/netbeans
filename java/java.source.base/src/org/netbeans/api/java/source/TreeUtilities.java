@@ -90,6 +90,7 @@ import org.netbeans.api.java.lexer.JavadocTokenId;
 import org.netbeans.api.java.source.JavaSource.Phase;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenSequence;
+import org.netbeans.api.lexer.TokenUtilities;
 import org.netbeans.lib.nbjavac.services.NBAttr;
 import org.netbeans.lib.nbjavac.services.NBResolve;
 import org.netbeans.modules.java.source.TreeUtilitiesAccessor;
@@ -2023,6 +2024,10 @@ public final class TreeUtilities {
         return ref.paramTypes;
     }
    
+    private static final Set<JavaTokenId> VAR_IGNORE_TO_IDENTIFIER = Set.of(
+            JavaTokenId.BLOCK_COMMENT, JavaTokenId.JAVADOC_COMMENT,
+            JavaTokenId.LINE_COMMENT, JavaTokenId.WHITESPACE
+    );
     /**Check the var type variable in given tree path {@link TreePath}.
      * 
      * @param path the path of tree {@link TreePath}
@@ -2032,9 +2037,27 @@ public final class TreeUtilities {
     public boolean isVarType(@NonNull TreePath path) {
         TokenSequence<JavaTokenId> tokenSequence = tokensFor(path.getLeaf());
         tokenSequence.moveStart();
-        while(tokenSequence.moveNext() && tokenSequence.token().id() != JavaTokenId.EQ && tokenSequence.token().id() != JavaTokenId.COLON && tokenSequence.token().id() != JavaTokenId.RPAREN && tokenSequence.token().id() != JavaTokenId.SEMICOLON){
-            if(tokenSequence.token().id() == JavaTokenId.VAR){
-                return true;
+        while(tokenSequence.moveNext()
+                && tokenSequence.token().id() != JavaTokenId.EQ
+                && tokenSequence.token().id() != JavaTokenId.COLON
+                && tokenSequence.token().id() != JavaTokenId.RPAREN
+                && tokenSequence.token().id() != JavaTokenId.SEMICOLON
+                ){
+            // Idea here: an identifier with content "var" is considered the
+            // var-type if it is followed by another identifier ignoring comments
+            // and whitespace
+            if(tokenSequence.token().id() == JavaTokenId.IDENTIFIER && tokenSequence.token().text().toString().equals("var")){
+                int pos = tokenSequence.index();
+                while(tokenSequence.moveNext()) {
+                    if (tokenSequence.token().id() == JavaTokenId.IDENTIFIER || tokenSequence.token().id() == JavaTokenId.UNDERSCORE) {
+                        return true;
+                    } else if(! VAR_IGNORE_TO_IDENTIFIER.contains(tokenSequence.token().id())) {
+                        break;
+                    }
+                }
+                // Reset after check
+                tokenSequence.moveIndex(pos);
+                tokenSequence.moveNext();
             }
         }
         return false;

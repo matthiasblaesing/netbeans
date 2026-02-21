@@ -6543,13 +6543,33 @@ public class CasualDiff {
         } catch (Exception ex) {}
         return sb.toString();
     }
-    
+
+    private static final Set<JavaTokenId> VAR_IGNORE_TO_IDENTIFIER = Set.of(
+            JavaTokenId.BLOCK_COMMENT, JavaTokenId.JAVADOC_COMMENT,
+            JavaTokenId.LINE_COMMENT, JavaTokenId.WHITESPACE
+    );
     private int findVar(int start, int end) {
         tokenSequence.move(end);
         while (tokenSequence.movePrevious() && tokenSequence.offset() >= start) {
-            JavaTokenId token = tokenSequence.token().id();
-            if (token == JavaTokenId.VAR) {
-                return tokenSequence.offset();
+            Token token = tokenSequence.token();
+            // Idea here: an identifier with content "var" is considered the
+            // var-type if it is followed by another identifier ignoring comments
+            // and whitespace. Additional safeguard here: it is assumed that
+            // start and end enclose the complete declaration and thus end can
+            // be used as an upper bound for the scan.
+            if (token.id() == JavaTokenId.IDENTIFIER && token.text().toString().equals("var")) {
+                int offset = tokenSequence.offset();
+                int pos = tokenSequence.index();
+                while (tokenSequence.moveNext() && tokenSequence.offset() <= end) {
+                    if (tokenSequence.token().id() == JavaTokenId.IDENTIFIER || tokenSequence.token().id() == JavaTokenId.UNDERSCORE) {
+                        return offset;
+                    } else if (!VAR_IGNORE_TO_IDENTIFIER.contains(tokenSequence.token().id())) {
+                        break;
+                    }
+                }
+                // Reset after check
+                tokenSequence.moveIndex(pos);
+                tokenSequence.moveNext();
             }
         }
         return -1;

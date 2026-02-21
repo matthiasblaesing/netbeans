@@ -6762,7 +6762,7 @@ public final class JavaCompletionTask<T> extends BaseTask {
 
         //TreeUtilities.isVarType() API can't be used as FirstParamTree might not be complete.
         while (ts.token().id() != JavaTokenId.COMMA && !isFirstParamVarType && ts.moveNext()) {
-            isFirstParamVarType = ts.token().id() == JavaTokenId.VAR;
+            isFirstParamVarType = ts.token().id() == JavaTokenId.IDENTIFIER && VAR_KEYWORD.equals(ts.token().text().toString());
         }
         return isFirstParamVarType;
 

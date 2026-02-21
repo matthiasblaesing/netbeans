@@ -24,6 +24,7 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ExportsTree;
 import com.sun.source.tree.ExpressionStatementTree;
+import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.LiteralTree;
@@ -76,6 +77,7 @@ import org.netbeans.api.java.source.support.CancellableTreePathScanner;
 import org.netbeans.api.lexer.PartType;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
+import org.netbeans.api.lexer.TokenId;
 import org.netbeans.api.lexer.TokenUtilities;
 import org.netbeans.modules.java.editor.base.imports.UnusedImports;
 import org.netbeans.modules.java.editor.base.semantic.ColoringAttributes.Coloring;
@@ -887,6 +889,11 @@ public abstract class SemanticHighlighterBase extends JavaParserResultTask<Resul
             return null;
         }
 
+        private static final Set<TokenId> VAR_IGNORE_TO_IDENTIFIER = Set.of(
+                JavaTokenId.BLOCK_COMMENT, JavaTokenId.JAVADOC_COMMENT,
+                JavaTokenId.LINE_COMMENT, JavaTokenId.WHITESPACE
+        );
+
         @Override
         public Void visitVariable(VariableTree tree, Void p) {
             if (info.getTreeUtilities().isSynthetic(getCurrentPath()))
@@ -899,7 +906,30 @@ public abstract class SemanticHighlighterBase extends JavaParserResultTask<Resul
             scan(tree.getModifiers(), null);
             
             tl.moveToEnd(tree.getModifiers());
-            
+
+            // Check if variable declaration is done with the `var` keyword
+            // var is only a keyword when used as a type and thus falls into the
+            // category of contextual keywords. The AST we receive here alreay
+            // holds the substituted/resolved type, so the tokensequence must be
+            // examinded.
+            int startIdx = tl.index();
+
+            int currentIdx = startIdx;
+            while(VAR_IGNORE_TO_IDENTIFIER.contains(tl.currentToken().id())) {
+                tl.moveNext();
+                if(! (tl.index() > currentIdx)) {
+                    break;
+                } else {
+                    currentIdx = tl.index();
+                }
+            }
+
+            if("var".contentEquals(tl.currentToken().text())) {
+                contextKeywords.add(tl.currentToken());
+            }
+
+            tl.resetToIndex(startIdx);
+
             scan(tree.getType(), null);
             
             int[] span = info.getTreeUtilities().findNameSpan(tree);
@@ -923,7 +953,7 @@ public abstract class SemanticHighlighterBase extends JavaParserResultTask<Resul
             
             return null;
         }
-        
+
         @Override
         public Void visitNewClass(NewClassTree tree, Void p) {
             TreePath tp;
