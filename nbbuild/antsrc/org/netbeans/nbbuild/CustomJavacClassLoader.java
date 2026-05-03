@@ -163,26 +163,11 @@ final class CustomJavacClassLoader extends URLClassLoader {
             attributes.log("Using modern compiler", Project.MSG_VERBOSE);
             Commandline cmd = setupModernJavacCommand();
             final String[] args = cmd.getArguments();
-            boolean bootClasspath = false;
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].startsWith("-Xbootclasspath/p:")) { // ide/html
-                    bootClasspath = true;
-                }
-            }
-            for (int i = 0; i < args.length; i++) {
-                if (!bootClasspath) {
-                    if ("-target".equals(args[i]) || "-source".equals(args[i])) {
-                        args[i] = "--release";
-                        if (args[i + 1].startsWith("1.")) {
-                            args[i + 1] = "8";
-                        }
-                    }
-                }
-            }
-            // nbjavac in version 20 contains invalid ct.sym files, which cause
+            // nbjavac contains invalid ct.sym files, which cause
             // warnings from build. Some of the modules are compiled with
             // -Werror and thus this breaks the build
-            // Ater the update to version 20+ this should be removed.
+            // These seem to be leaked from the frgaal:
+            // warning: [classfile] Cannot find annotation method 'value()' in type 'Future+Deprecated+Annotation': class file for frgaal.internal.Future+Deprecated+Annotation not found
             String[] args2 = new String[args.length + 1];
             args2[0] = "-Xlint:-classfile";
             System.arraycopy(args, 0, args2, 1, args.length);
