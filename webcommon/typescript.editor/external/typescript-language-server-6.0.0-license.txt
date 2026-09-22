@@ -1,8 +1,8 @@
 Name: typescript-language-server
 Description: Language Server Protocol (LSP) implementation for TypeScript using tsserver
-Version: 4.3.3
+Version: 6.0.0
 License: Apache-2.0-typescript-language-server
-Origin: https://github.com/typescript-language-server/typescript-language-server
+Origin: null
 
 Parts of the code copied from the https://github.com/microsoft/vscode repository are licensed under the following license:
 
